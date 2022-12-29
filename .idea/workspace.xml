@@ -5,8 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="80310708-64f8-4d19-8e72-75a706da8ecd" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/dockerfile/rabbitmq/rabbitmq.dockerfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dockerfile/postgresql/postgre.dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/dockerfile/postgresql/postgre.dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dockerfile/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/dockerfile/docker-compose.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -92,6 +93,24 @@
       </deployment>
       <method v="2" />
     </configuration>
+    <configuration name="rabbitmq/rabbitmq.dockerfile (1)" type="docker-deploy" factoryName="dockerfile" temporary="true" server-name="windows">
+      <deployment type="dockerfile">
+        <settings>
+          <option name="buildOnly" value="true" />
+          <option name="sourceFilePath" value="dockerfile/rabbitmq/rabbitmq.dockerfile" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <configuration name="rabbitmq/rabbitmq.dockerfile" type="docker-deploy" factoryName="dockerfile" temporary="true" server-name="windows">
+      <deployment type="dockerfile">
+        <settings>
+          <option name="buildOnly" value="true" />
+          <option name="sourceFilePath" value="dockerfile/rabbitmq/rabbitmq.dockerfile" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
     <configuration name="redis" type="docker-deploy" factoryName="dockerfile" server-name="windows">
       <deployment type="dockerfile">
         <settings>
@@ -113,6 +132,8 @@
     <recent_temporary>
       <list>
         <item itemvalue="Docker.dockerfile: Compose Deployment" />
+        <item itemvalue="Docker.rabbitmq/rabbitmq.dockerfile" />
+        <item itemvalue="Docker.rabbitmq/rabbitmq.dockerfile (1)" />
         <item itemvalue="Docker.dockerfile.mypostgres: Compose Deployment" />
         <item itemvalue="Docker.postgresql/postgre.dockerfile" />
       </list>
@@ -128,7 +149,8 @@
       <updated>1672239664155</updated>
       <workItem from="1672239665380" duration="3777000" />
       <workItem from="1672279002690" duration="6561000" />
-      <workItem from="1672306009185" duration="1557000" />
+      <workItem from="1672306009185" duration="2081000" />
+      <workItem from="1672308774850" duration="4525000" />
     </task>
     <task id="LOCAL-00001" summary="构建redis dockerfile">
       <created>1672244821422</created>
@@ -151,7 +173,14 @@
       <option name="project" value="LOCAL" />
       <updated>1672307706086</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="更换postgre数据挂在路径">
+      <created>1672308255112</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1672308255112</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -161,6 +190,7 @@
     <MESSAGE value="构建redis dockerfile" />
     <MESSAGE value="构建redis docker-compose成功，开始构建postgre dockerfile" />
     <MESSAGE value="更正postgre端口" />
-    <option name="LAST_COMMIT_MESSAGE" value="更正postgre端口" />
+    <MESSAGE value="更换postgre数据挂在路径" />
+    <option name="LAST_COMMIT_MESSAGE" value="更换postgre数据挂在路径" />
   </component>
 </project>

@@ -18,3 +18,14 @@ services:
     ports:
       - 5432:5432
     restart: always
+  myrabbitmq:
+    build:
+      context: rabbitmq/
+      dockerfile: rabbitmq.dockerfile
+    container_name: myrabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      - RABBITMQ_DEFAULT_PASS=921115
+      - RABBITMQ_DEFAULT_USER=vergil
