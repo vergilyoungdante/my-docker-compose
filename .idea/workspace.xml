@@ -6,7 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="80310708-64f8-4d19-8e72-75a706da8ecd" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dockerfile/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/dockerfile/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dockerfile/postgresql/postgre.dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/dockerfile/postgresql/postgre.dockerfile" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,7 +49,7 @@
       <recent name="D:\github\docker-compose\dockerfile\redis" />
     </key>
   </component>
-  <component name="RunManager" selected="Docker.dockerfile.mypostgres: Compose Deployment">
+  <component name="RunManager" selected="Docker.dockerfile: Compose Deployment">
     <configuration default="true" type="docker-deploy" factoryName="docker-compose.yml" temporary="true">
       <deployment type="docker-compose.yml">
         <settings />
@@ -112,8 +112,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Docker.dockerfile.mypostgres: Compose Deployment" />
         <item itemvalue="Docker.dockerfile: Compose Deployment" />
+        <item itemvalue="Docker.dockerfile.mypostgres: Compose Deployment" />
         <item itemvalue="Docker.postgresql/postgre.dockerfile" />
       </list>
     </recent_temporary>
@@ -128,7 +128,7 @@
       <updated>1672239664155</updated>
       <workItem from="1672239665380" duration="3777000" />
       <workItem from="1672279002690" duration="6561000" />
-      <workItem from="1672306009185" duration="979000" />
+      <workItem from="1672306009185" duration="1557000" />
     </task>
     <task id="LOCAL-00001" summary="构建redis dockerfile">
       <created>1672244821422</created>
@@ -144,7 +144,14 @@
       <option name="project" value="LOCAL" />
       <updated>1672305110238</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="更正postgre端口">
+      <created>1672307706086</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1672307706086</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -153,6 +160,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="构建redis dockerfile" />
     <MESSAGE value="构建redis docker-compose成功，开始构建postgre dockerfile" />
-    <option name="LAST_COMMIT_MESSAGE" value="构建redis docker-compose成功，开始构建postgre dockerfile" />
+    <MESSAGE value="更正postgre端口" />
+    <option name="LAST_COMMIT_MESSAGE" value="更正postgre端口" />
   </component>
 </project>
