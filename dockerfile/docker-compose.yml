@@ -16,5 +16,5 @@ services:
       dockerfile: postgre.dockerfile
     container_name: mypostgres
     ports:
-      - 5342:5432
+      - 5432:5432
     restart: always

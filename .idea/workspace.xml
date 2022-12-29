@@ -5,9 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="80310708-64f8-4d19-8e72-75a706da8ecd" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/dockerfile/docker-compose.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dockerfile/postgresql/postgre.dockerfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dockerfile/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/dockerfile/docker-compose.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,30 +28,32 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "SONARLINT_PRECOMMIT_ANALYSIS": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;SONARLINT_PRECOMMIT_ANALYSIS&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\github\docker-compose\dockerfile\redis" />
     </key>
   </component>
-  <component name="RunManager" selected="Docker.postgresql/postgre.dockerfile">
+  <component name="RunManager" selected="Docker.dockerfile.mypostgres: Compose Deployment">
     <configuration default="true" type="docker-deploy" factoryName="docker-compose.yml" temporary="true">
-      <deployment type="docker-compose.yml" />
+      <deployment type="docker-compose.yml">
+        <settings />
+      </deployment>
       <method v="2" />
     </configuration>
     <configuration default="true" type="docker-deploy" factoryName="dockerfile" temporary="true">
@@ -64,6 +65,19 @@
     <configuration name="dockerfile: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="windows">
       <deployment type="docker-compose.yml">
         <settings>
+          <option name="sourceFilePath" value="dockerfile/docker-compose.yml" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <configuration name="dockerfile.mypostgres: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="windows">
+      <deployment type="docker-compose.yml">
+        <settings>
+          <option name="services">
+            <list>
+              <option value="mypostgres" />
+            </list>
+          </option>
           <option name="sourceFilePath" value="dockerfile/docker-compose.yml" />
         </settings>
       </deployment>
@@ -98,8 +112,9 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Docker.postgresql/postgre.dockerfile" />
+        <item itemvalue="Docker.dockerfile.mypostgres: Compose Deployment" />
         <item itemvalue="Docker.dockerfile: Compose Deployment" />
+        <item itemvalue="Docker.postgresql/postgre.dockerfile" />
       </list>
     </recent_temporary>
   </component>
@@ -112,7 +127,8 @@
       <option name="presentableId" value="Default" />
       <updated>1672239664155</updated>
       <workItem from="1672239665380" duration="3777000" />
-      <workItem from="1672279002690" duration="6469000" />
+      <workItem from="1672279002690" duration="6561000" />
+      <workItem from="1672306009185" duration="979000" />
     </task>
     <task id="LOCAL-00001" summary="构建redis dockerfile">
       <created>1672244821422</created>
@@ -121,7 +137,14 @@
       <option name="project" value="LOCAL" />
       <updated>1672244821422</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="构建redis docker-compose成功，开始构建postgre dockerfile">
+      <created>1672305110238</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1672305110238</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -129,6 +152,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="构建redis dockerfile" />
-    <option name="LAST_COMMIT_MESSAGE" value="构建redis dockerfile" />
+    <MESSAGE value="构建redis docker-compose成功，开始构建postgre dockerfile" />
+    <option name="LAST_COMMIT_MESSAGE" value="构建redis docker-compose成功，开始构建postgre dockerfile" />
   </component>
 </project>
