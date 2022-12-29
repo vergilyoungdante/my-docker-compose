@@ -1,0 +1,20 @@
+version: "3"
+
+services:
+  myredis:
+    build:
+      context: redis/
+      dockerfile: redis.dockerfile
+    container_name: myredis
+    ports:
+      - 6379:6379
+    restart: always
+
+  mypostgres:
+    build:
+      context: postgresql/
+      dockerfile: postgre.dockerfile
+    container_name: mypostgres
+    ports:
+      - 5342:5432
+    restart: always
