@@ -9,6 +9,14 @@ services:
     ports:
       - 6379:6379
     restart: always
+  myredis2:
+    build:
+      context: redis/
+      dockerfile: redis.dockerfile
+    container_name: myredis2
+    ports:
+      - 6380:6379
+    restart: always
 
   mypostgres:
     build:
@@ -17,6 +25,14 @@ services:
     container_name: mypostgres
     ports:
       - 5432:5432
+    restart: always
+  mypostgres2:
+    build:
+      context: postgresql/
+      dockerfile: postgre2.dockerfile
+    container_name: mypostgres2
+    ports:
+      - 5433:5432
     restart: always
   myrabbitmq:
     build:
@@ -29,3 +45,8 @@ services:
     environment:
       - RABBITMQ_DEFAULT_PASS=921115
       - RABBITMQ_DEFAULT_USER=vergil
+#  myelasticsearch:
+#    image: elasticsearch:8.5.3
+#    container_name: myelasticsearch
+#    ports:
+#      - 9200:9200

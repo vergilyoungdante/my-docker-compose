@@ -5,7 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="80310708-64f8-4d19-8e72-75a706da8ecd" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/dockerfile/rabbitmq/rabbitmq.dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dockerfile/postgresql/postgre2.dockerfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dockerfile/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/dockerfile/docker-compose.yml" afterDir="false" />
     </list>
@@ -36,16 +36,20 @@
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;SONARLINT_PRECOMMIT_ANALYSIS&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/github/docker-compose/dockerfile/postgresql&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;Docker&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\github\docker-compose\dockerfile\postgresql" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\github\docker-compose\dockerfile\redis" />
     </key>
@@ -150,7 +154,18 @@
       <workItem from="1672239665380" duration="3777000" />
       <workItem from="1672279002690" duration="6561000" />
       <workItem from="1672306009185" duration="2081000" />
-      <workItem from="1672308774850" duration="4525000" />
+      <workItem from="1672308774850" duration="6213000" />
+      <workItem from="1672325604251" duration="1485000" />
+      <workItem from="1672567269752" duration="834000" />
+      <workItem from="1672829146493" duration="681000" />
+      <workItem from="1672883725098" duration="4330000" />
+      <workItem from="1672930268922" duration="205000" />
+      <workItem from="1672969817332" duration="3917000" />
+      <workItem from="1673230118239" duration="1549000" />
+      <workItem from="1673341493769" duration="599000" />
+      <workItem from="1673355739535" duration="768000" />
+      <workItem from="1673449331488" duration="326000" />
+      <workItem from="1673595695111" duration="613000" />
     </task>
     <task id="LOCAL-00001" summary="构建redis dockerfile">
       <created>1672244821422</created>
@@ -180,7 +195,14 @@
       <option name="project" value="LOCAL" />
       <updated>1672308255112</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="rabbitmq部署成功">
+      <created>1672315079399</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1672315079400</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -191,6 +213,7 @@
     <MESSAGE value="构建redis docker-compose成功，开始构建postgre dockerfile" />
     <MESSAGE value="更正postgre端口" />
     <MESSAGE value="更换postgre数据挂在路径" />
-    <option name="LAST_COMMIT_MESSAGE" value="更换postgre数据挂在路径" />
+    <MESSAGE value="rabbitmq部署成功" />
+    <option name="LAST_COMMIT_MESSAGE" value="rabbitmq部署成功" />
   </component>
 </project>
