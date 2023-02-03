@@ -9,14 +9,14 @@ services:
     ports:
       - 6379:6379
     restart: always
-  myredis2:
-    build:
-      context: redis/
-      dockerfile: redis.dockerfile
-    container_name: myredis2
-    ports:
-      - 6380:6379
-    restart: always
+#  myredis2:
+#    build:
+#      context: redis/
+#      dockerfile: redis.dockerfile
+#    container_name: myredis2
+#    ports:
+#      - 6380:6379
+#    restart: always
 
   mypostgres:
     build:
@@ -26,14 +26,14 @@ services:
     ports:
       - 5432:5432
     restart: always
-  mypostgres2:
-    build:
-      context: postgresql/
-      dockerfile: postgre2.dockerfile
-    container_name: mypostgres2
-    ports:
-      - 5433:5432
-    restart: always
+#  mypostgres2:
+#    build:
+#      context: postgresql/
+#      dockerfile: postgre2.dockerfile
+#    container_name: mypostgres2
+#    ports:
+#      - 5433:5432
+#    restart: always
   myrabbitmq:
     build:
       context: rabbitmq/
@@ -45,8 +45,30 @@ services:
     environment:
       - RABBITMQ_DEFAULT_PASS=921115
       - RABBITMQ_DEFAULT_USER=vergil
-#  myelasticsearch:
-#    image: elasticsearch:8.5.3
-#    container_name: myelasticsearch
-#    ports:
-#      - 9200:9200
+    restart: always
+  myelasticsearch:
+    image: elasticsearch:8.6.1
+    container_name: myelasticsearch
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      - "discovery.type=single-node"
+    volumes:
+      - /root/es/plugins:/usr/share/elasticsearch/plugins #插件文件挂载
+      - /root/es/data:/usr/share/elasticsearch/data #数据文件挂载
+    restart: always
+  mykibana:
+    depends_on:
+      - myelasticsearch
+    image: kibana:8.6.1
+    container_name: mykibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://myelasticsearch:9200
+      - I18N_LOCALE="zh-CN"
+    ports:
+      - 5601:5601
+    restart: always
+networks:
+  elk:
+    driver: bridge
