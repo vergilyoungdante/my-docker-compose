@@ -5,8 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="80310708-64f8-4d19-8e72-75a706da8ecd" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/dockerfile/kibana/kibana.dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dockerfile/kibana/kibana.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dockerfile/nacos/nacos.dockerfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dockerfile/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/dockerfile/docker-compose.yml" afterDir="false" />
     </list>
@@ -14,6 +13,13 @@
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Dockerfile" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -37,6 +43,7 @@
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;SONARLINT_PRECOMMIT_ANALYSIS&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;last_opened_file_path&quot;: &quot;D:/github/docker-compose/dockerfile/docker-compose.yml&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -55,8 +62,17 @@
       <recent name="D:\github\docker-compose\dockerfile\redis" />
     </key>
   </component>
-  <component name="RunManager" selected="Docker.一键部署">
+  <component name="RunManager">
     <configuration name="一键部署" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="huawei">
+      <deployment type="docker-compose.yml">
+        <settings>
+          <option name="envFilePath" value="" />
+          <option name="sourceFilePath" value="dockerfile/docker-compose.yml" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <configuration name="本地一键部署" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="windows">
       <deployment type="docker-compose.yml">
         <settings>
           <option name="envFilePath" value="" />
@@ -77,18 +93,9 @@
       </deployment>
       <method v="2" />
     </configuration>
-    <configuration name="dockerfile: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="windows">
-      <deployment type="docker-compose.yml">
-        <settings>
-          <option name="sourceFilePath" value="dockerfile/docker-compose.yml" />
-        </settings>
-      </deployment>
-      <method v="2" />
-    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Docker.一键部署" />
-        <item itemvalue="Docker.dockerfile: Compose Deployment" />
       </list>
     </recent_temporary>
   </component>
@@ -122,7 +129,24 @@
       <workItem from="1674020774132" duration="319000" />
       <workItem from="1675409413000" duration="6231000" />
       <workItem from="1675425913619" duration="2625000" />
-      <workItem from="1675434928239" duration="2079000" />
+      <workItem from="1675434928239" duration="3389000" />
+      <workItem from="1675499931842" duration="1837000" />
+      <workItem from="1680064874037" duration="33000" />
+      <workItem from="1680067137076" duration="550000" />
+      <workItem from="1680072024918" duration="94000" />
+      <workItem from="1680076638119" duration="600000" />
+      <workItem from="1680337106006" duration="313000" />
+      <workItem from="1680413013123" duration="606000" />
+      <workItem from="1680522110006" duration="29000" />
+      <workItem from="1680577273933" duration="620000" />
+      <workItem from="1680745524391" duration="220000" />
+      <workItem from="1680745760249" duration="75000" />
+      <workItem from="1680746067939" duration="598000" />
+      <workItem from="1680747641498" duration="599000" />
+      <workItem from="1680750575976" duration="2996000" />
+      <workItem from="1681873683259" duration="13218000" />
+      <workItem from="1681976766409" duration="7817000" />
+      <workItem from="1682057816234" duration="2583000" />
     </task>
     <task id="LOCAL-00001" summary="构建redis dockerfile">
       <created>1672244821422</created>
@@ -166,7 +190,14 @@
       <option name="project" value="LOCAL" />
       <updated>1673858989115</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="开始增加elk">
+      <created>1675437065018</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1675437065018</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -179,6 +210,7 @@
     <MESSAGE value="更换postgre数据挂在路径" />
     <MESSAGE value="rabbitmq部署成功" />
     <MESSAGE value="增加redis2" />
-    <option name="LAST_COMMIT_MESSAGE" value="增加redis2" />
+    <MESSAGE value="开始增加elk" />
+    <option name="LAST_COMMIT_MESSAGE" value="开始增加elk" />
   </component>
 </project>
