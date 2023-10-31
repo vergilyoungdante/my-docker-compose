@@ -1,4 +1,4 @@
-FROM redis/redis-stack-server:7.2.0-v2
+FROM redis/redis-stack-server:7.2.0-v5
 MAINTAINER vergil-young
 COPY redis.conf /usr/local/etc/redis/redis.conf
 EXPOSE 6379

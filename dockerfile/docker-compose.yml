@@ -1,14 +1,6 @@
 version: "3"
 
 services:
-  #  myredis:
-  #    build:
-  #      context: redis/
-  #      dockerfile: redis.dockerfile
-  #    container_name: vergil-redis
-  #    ports:
-  #      - 6379:6379
-  #    restart: always
   myredisstack:
     build:
       context: redis-stack/
@@ -25,7 +17,7 @@ services:
     ports:
       - 5432:5432
     environment:
-      POSTGRES_PASSWORD: 921115
+      POSTGRES_PASSWORD: xyfs2023
       POSTGRES_USER: postgres
       TZ: Asia/Shanghai
       PGTZ: Asia/Shanghai
@@ -39,30 +31,30 @@ services:
       retries: 5
 
   myrabbitmq:
-    image: rabbitmq:3.12.4-management-alpine
+    image: rabbitmq:3.13.0-rc.1-management-alpine
     container_name: vergil-rabbitmq
     ports:
       - 5672:5672
       - 15672:15672
     environment:
-      - RABBITMQ_DEFAULT_PASS=921115
+      - RABBITMQ_DEFAULT_PASS=xyfs2023
       - RABBITMQ_DEFAULT_USER=vergil
     restart: always
-#  mymysql:
-#    image: mysql:8.0.33
-#    container_name: vergil-mysql
-#    environment:
-#      MYSQL_ROOT_PASSWORD: 921115 #root管理员用户密码
-#      MYSQL_USER: vergil   #创建test用户
-#      MYSQL_PASSWORD: 921115  #设置test用户的密码
-#    volumes:
-#      #mysql数据库挂载到host物理机目录
-#      - /mnt/data/vergil/mysql/db:/var/lib/mysql
-#      #容器的配置目录挂载到host物理机目录
-#      - /mnt/data/vergil/mysql/config:/etc/mysql/conf.d
-#    ports:
-#      - 3306:3306
-#    restart: always
+
+  mymysql:
+    image: mysql:8.2
+    container_name: vergil-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: xyfs2023 #root管理员用户密码
+    volumes:
+      #mysql数据库挂载到host物理机目录
+      - /mnt/data/vergil/mysql/db:/var/lib/mysql
+      #容器的配置目录挂载到host物理机目录
+      - /mnt/data/vergil/mysql/config:/etc/mysql/conf.d
+    ports:
+      - 3306:3306
+    restart: always
+
 #  myelasticsearch:
 #    image: elasticsearch:8.6.1
 #    container_name: myelasticsearch
@@ -103,24 +95,24 @@ services:
 #      - NACOS_AUTH_IDENTITY_VALUE=123456
 #      - NACOS_AUTH_TOKEN=MTIzNDU2Nzg5MTIzNDU2Nzg5MTIzNDU2Nzg5MTIzNDU2Nzg5
 #      - MODE=standalone
-#  minio:
-#    image: minio/minio:RELEASE.2023-03-20T20-16-18Z
-#    privileged: true
-#    container_name: myminio
-#    ports:
-#      - 9000:9000
-#      - 9001:9001
-#    command: minio server /data --console-address ":9001"
-#    environment:
-#      - MINIO_ROOT_USER=vergil
-#      - MINIO_ROOT_PASSWORD=19921115
-#    volumes:
-#      - /mnt/data/vergil/minio:/data
-#    healthcheck:
-#      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
-#      interval: 30s
-#      timeout: 20s
-#      retries: 3
+  minio:
+    image: quay.io/minio/minio:RELEASE.2023-10-25T06-33-25Z
+    privileged: true
+    container_name: myminio
+    ports:
+      - 9000:9000
+      - 9090:9090
+    command: minio server /data --console-address ":9090"
+    environment:
+      - MINIO_ROOT_USER=vergil
+      - MINIO_ROOT_PASSWORD=xyfs2023
+    volumes:
+      - /mnt/data/vergil/minio:/data
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
+      interval: 30s
+      timeout: 20s
+      retries: 3
 
 #  etcd:
 #    container_name: milvus-etcd
