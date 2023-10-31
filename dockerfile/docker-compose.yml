@@ -135,6 +135,7 @@ services:
     volumes:
       - /mnt/data/vergil/nacos:/home/nacos/logs
     environment:
+      - NACOS_AUTH_ENABLE=true
       - NACOS_AUTH_IDENTITY_KEY=123456
       - NACOS_AUTH_IDENTITY_VALUE=123456
       - NACOS_AUTH_TOKEN=MTIzNDU2Nzg5MTIzNDU2Nzg5MTIzNDU2Nzg5MTIzNDU2Nzg5
