@@ -42,10 +42,16 @@ services:
     restart: always
 
   mymysql:
-    image: mysql:8.2
+    build:
+      context: mysql/
+      dockerfile: mysql.dockerfile
     container_name: vergil-mysql
     environment:
       MYSQL_ROOT_PASSWORD: xyfs2023 #root管理员用户密码
+      MYSQL_DATABASE: nacos_dev
+      MYSQL_USER: nacosvergil
+      MYSQL_PASSWORD: nacosxyfs2023
+      LANG: C.UTF-8
     volumes:
       #mysql数据库挂载到host物理机目录
       - /mnt/data/vergil/mysql/db:/var/lib/mysql
@@ -54,6 +60,11 @@ services:
     ports:
       - 3306:3306
     restart: always
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      interval: 5s
+      timeout: 10s
+      retries: 10
 
 #  myelasticsearch:
 #    image: elasticsearch:8.6.1
@@ -95,6 +106,7 @@ services:
 #      - NACOS_AUTH_IDENTITY_VALUE=123456
 #      - NACOS_AUTH_TOKEN=MTIzNDU2Nzg5MTIzNDU2Nzg5MTIzNDU2Nzg5MTIzNDU2Nzg5
 #      - MODE=standalone
+
   minio:
     image: quay.io/minio/minio:RELEASE.2023-10-25T06-33-25Z
     privileged: true
@@ -113,6 +125,31 @@ services:
       interval: 30s
       timeout: 20s
       retries: 3
+
+  mynacos:
+    image: nacos/nacos-server:v2.2.3
+    container_name: mynacos
+    ports:
+      - 8848:8848
+      - 9848:9848
+    volumes:
+      - /mnt/data/vergil/nacos:/home/nacos/logs
+    environment:
+      - NACOS_AUTH_IDENTITY_KEY=123456
+      - NACOS_AUTH_IDENTITY_VALUE=123456
+      - NACOS_AUTH_TOKEN=MTIzNDU2Nzg5MTIzNDU2Nzg5MTIzNDU2Nzg5MTIzNDU2Nzg5
+      - MODE=standalone
+      - SPRING_DATASOURCE_PLATFORM=mysql
+      - MYSQL_SERVICE_HOST=mymysql
+      - MYSQL_SERVICE_DB_NAME=nacos_dev
+      - MYSQL_SERVICE_PORT=3306
+      - MYSQL_SERVICE_USER=nacosvergil
+      - MYSQL_SERVICE_PASSWORD=nacosxyfs2023
+      - MYSQL_SERVICE_DB_PARAM=characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true
+    depends_on:
+      mymysql:
+        condition: service_healthy
+    restart: always
 
 #  etcd:
 #    container_name: milvus-etcd
