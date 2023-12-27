@@ -129,9 +129,10 @@ services:
   mynacos:
     image: nacos/nacos-server:v2.2.3
     container_name: mynacos
-    ports:
-      - 8848:8848
-      - 9848:9848
+#    网络改用host模式，无需映射端口
+#    ports:
+#      - 8848:8848
+#      - 9848:9848
     volumes:
       - /mnt/data/vergil/nacos:/home/nacos/logs
     environment:
