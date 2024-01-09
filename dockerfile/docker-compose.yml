@@ -167,7 +167,18 @@ services:
     volumes:
       - /mnt/data/vergil/sentinel/logs:/root/logs
       - /mnt/data/vergil/sentinel/logs:/app-logs
-#    restart: always
+    restart: always
+
+  myseata:
+    image: seataio/seata-server:2.0.0.jre17
+    ports:
+      - "7091:7091"
+      - "8091:8091"
+    environment:
+      - STORE_MODE=db
+      - SEATA_IP=113.141.90.115
+      - SEATA_PORT=8091
+      - TZ=Asia/Shanghai
 #  etcd:
 #    container_name: milvus-etcd
 #    image: quay.io/coreos/etcd:v3.5.5
