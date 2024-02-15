@@ -16,6 +16,7 @@ services:
     container_name: docker-redis
     ports:
       - 6379:6379
+    # 所有的配置需要在这里面加进去了，换配置文件很麻烦，得进镜像找去
     environment:
       - REDIS_ARGS='--requirepass xyfs2023'
     restart: always
@@ -231,3 +232,93 @@ services:
 #      - "3000:3000"
 #    depends_on:
 #      - "milvus"
+  palu:
+    container_name: mypalu
+    image: jammsen/palworld-dedicated-server:latest
+    restart: unless-stopped
+    ports:
+      - target: 8211 # 容器内游戏端口
+        published: 8212 # 宿主机映射端口
+        protocol: udp
+        mode: host
+      - target: 25575 # RCON 容器内
+        published: 25575 # RCON 宿主机映射端口
+        protocol: tcp
+        mode: host
+    environment:
+      - TZ=Asia/Shanghai # 时区
+      - ALWAYS_UPDATE_ON_START=true # 启动服务时，更新服务器
+      - MULTITHREAD_ENABLED=true # 开启多线程，改进多核CPU使用
+      - BACKUP_ENABLED=false # 服务器备份（对应到volume内的文件）
+      - BACKUP_CRON_EXPRESSION=0 7 * * * # 备份轮训Cron表达式
+      - NETSERVERMAXTICKRATE=120 # 网络最大心跳延迟（30 - 120，默认120）
+      - DIFFICULTY=None # 游戏模式（None、Normal、Difficult）
+      - DAYTIME_SPEEDRATE=1.000000 # 白天时间速率
+      - NIGHTTIME_SPEEDRATE=0.500000 # 夜间时间速率
+      - EXP_RATE=2.000000 # 经验率
+      - PAL_CAPTURE_RATE=2.000000 # 捕获率
+      - PAL_SPAWN_NUM_RATE=1.500000 # 生成率
+      - PAL_DAMAGE_RATE_ATTACK=1.000000 # 伤害率
+      - PAL_DAMAGE_RATE_DEFENSE=1.000000 # 防御率
+      - PLAYER_DAMAGE_RATE_ATTACK=1.000000 # 玩家伤害率
+      - PLAYER_DAMAGE_RATE_DEFENSE=1.000000 # 玩家防御率
+      - PLAYER_STOMACH_DECREASE_RATE=1.000000 # 玩家饥饿率
+      - PLAYER_STAMINA_DECREACE_RATE=1.000000 # 玩家耐力减少率
+      - PLAYER_AUTO_HP_REGENE_RATE=2.000000 # 玩家自动生命恢复率
+      - PLAYER_AUTO_HP_REGENE_RATE_IN_SLEEP=2.000000 # 玩家睡眠自动生命恢复率
+      - PAL_STOMACH_DECREACE_RATE=1.000000 # 帕鲁饥饿率
+      - PAL_STAMINA_DECREACE_RATE=1.000000 # 帕鲁耐力减少率
+      - PAL_AUTO_HP_REGENE_RATE=1.000000 # 帕鲁HP恢复率
+      - PAL_AUTO_HP_REGENE_RATE_IN_SLEEP=1.000000 # 帕鲁睡眠HP恢复率
+      - BUILD_OBJECT_DAMAGE_RATE=1.000000 # 对建筑伤害率
+      - BUILD_OBJECT_DETERIORATION_DAMAGE_RATE=0.000000 # 建筑恶化率
+      - COLLECTION_DROP_RATE=1.000000 # 可收集物品比率
+      - COLLECTION_OBJECT_HP_RATE=1.000000 # 可收集物品生命值比率
+      - COLLECTION_OBJECT_RESPAWN_SPEED_RATE=1.000000 # 可收集物品重生速率比率
+      - ENEMY_DROP_ITEM_RATE=2.000000 # 敌对生物掉落物品比率
+      - DEATH_PENALTY=None # 死亡惩罚
+      - ENABLE_PLAYER_TO_PLAYER_DAMAGE=false # 玩家对玩家伤害
+      - ENABLE_FRIENDLY_FIRE=false # 友军伤害
+      - ENABLE_INVADER_ENEMY=true # 入侵者敌人
+      - ACTIVE_UNKO=false # 活动Unko
+      - ENABLE_AIM_ASSIST_PAD=true # 启用瞄准辅助板
+      - ENABLE_AIM_ASSIST_KEYBOARD=false # 启用瞄准辅助键盘
+      - DROP_ITEM_MAX_NUM=3000 # 掉落物品最大数量
+      - DROP_ITEM_MAX_NUM_UNKO=100 # 掉落物品最大数量Unko
+      - BASE_CAMP_MAX_NUM=128 # 基地最大数量
+      - BASE_CAMP_WORKER_MAXNUM=15 # 基地最大工作人数
+      - DROP_ITEM_ALIVE_MAX_HOURS=1.000000 # 掉落物品最大存活时间（小时）
+      - AUTO_RESET_GUILD_NO_ONLINE_PLAYERS=false # 自动重置公会无在线玩家
+      - AUTO_RESET_GUILD_TIME_NO_ONLINE_PLAYERS=72.000000 # 自动重置公会无在线玩家时间（小时）
+      - GUILD_PLAYER_MAX_NUM=20 # 公会玩家最大数量
+      - PAL_EGG_DEFAULT_HATCHING_TIME=0.000000 # 帕鲁蛋默认孵化时间（小时）
+      - WORK_SPEED_RATE=1.000000 # 工作速度比率
+      - IS_MULTIPLAY=false # 是否多人
+      - IS_PVP=false # 是否PVP
+      - CAN_PICKUP_OTHER_GUILD_DEATH_PENALTY_DROP=false # 是否可以拾取其他公会死亡惩罚物品
+      - ENABLE_NON_LOGIN_PENALTY=true # 是否启用非登录惩罚
+      - ENABLE_FAST_TRAVEL=true # 是否启用快速旅行
+      - IS_START_LOCATION_SELECT_BY_MAP=true # 是否通过地图选择起始位置
+      - EXIST_PLAYER_AFTER_LOGOUT=false # 是否在注销后存在玩家
+      - ENABLE_DEFENSE_OTHER_GUILD_PLAYER=false # 是否启用防御其他公会玩家
+      - COOP_PLAYER_MAX_NUM=8 # 最大组队玩家
+      - MAX_PLAYERS=32 # 最大玩家
+      - COMMUNITY_SERVER=false # 社区服务器模式，true 会出现在游戏社区服务器内
+      - SERVER_NAME=aareyouokk # 服务器名称
+      - SERVER_DESCRIPTION=areyouokya # 服务器描述
+      - ADMIN_PASSWORD=19921115ctzL! # 管理员密码
+      - SERVER_PASSWORD=123321aa # 服务器进入密码,COMMUNITY_SERVER为true是有效
+      - PUBLIC_PORT=8211 # 服务器端口
+      - PUBLIC_IP=113.141.90.115 # 默认自动识别 # 服务器IP
+      - RCON_ENABLED=true # 启用RCON
+      - RCON_PORT=25575 # RCON端口
+      - REGION=
+      - USEAUTH=true # 启用验证
+      - BAN_LIST_URL=https://api.palworldgame.com/api/banlist.txt # 禁言列表URL
+    volumes:
+      - /mnt/data/palu:/palworld # volume自己去指定
+
+  rcon:
+    image: outdead/rcon:latest
+    entrypoint: ["/rcon", "-a", "113.141.90.115:25575", "-p", "xyfs2023"]
+    profiles: ["rcon"]
