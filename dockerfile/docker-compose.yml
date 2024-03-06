@@ -2,26 +2,28 @@ version: "3"
 
 services:
 #  建议用redis-stack,这两个端口冲突，不能部署在同一台机器
-#  myredis:
-#    build:
-#      context: redis/
-#      dockerfile: redis.dockerfile
-#    container_name: vergil-redis
-#    ports:
-#      - 6379:6379
-#    healthcheck:
-#      test: [ "CMD", "redis-cli","ping" ]
-  myredisstack:
-    image: redis/redis-stack:7.2.0-v8
-    container_name: docker-redis
+  myredis:
+    build:
+      context: redis/
+      dockerfile: redis.dockerfile
+    container_name: vergil-redis
     ports:
       - 6379:6379
-    # 所有的配置需要在这里面加进去了，换配置文件很麻烦，得进镜像找去
-    environment:
-      - REDIS_ARGS='--requirepass xyfs2023'
-    restart: always
     healthcheck:
       test: [ "CMD", "redis-cli","ping" ]
+#  myredisstack:
+#    image: redis/redis-stack:7.2.0-v8
+#    container_name: docker-redis
+#    ports:
+#      - 6379:6379
+#    # 所有的配置需要在这里面加进去了，换配置文件很麻烦，得进镜像找去,现在发现这个还不生效
+#    environment:
+#      - REDIS_ARGS="--requirepass xyfs2023"
+#    command:
+#      - redis-server --requirepass xyfs2023
+#    restart: always
+#    healthcheck:
+#      test: [ "CMD", "redis-cli","ping" ]
 
   mypostgres:
     image: postgres:16.0-alpine3.18
