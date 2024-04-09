@@ -9,6 +9,11 @@ services:
     container_name: vergil-redis
     ports:
       - 6379:6379
+    deploy:
+      resources:
+        limits:
+          cpus: 4
+          memory: 8G
     healthcheck:
       test: [ "CMD", "redis-cli","ping" ]
 #  myredisstack:
@@ -38,22 +43,27 @@ services:
     volumes:
       - /mnt/data/vergil/postgres:/var/lib/postgresql/data
     restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: 4
+          memory: 8G
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready" ]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  myrabbitmq:
-    image: rabbitmq:3.13.0-rc.1-management-alpine
-    container_name: vergil-rabbitmq
-    ports:
-      - 5672:5672
-      - 15672:15672
-    environment:
-      - RABBITMQ_DEFAULT_PASS=xyfs2023
-      - RABBITMQ_DEFAULT_USER=vergil
-    restart: always
+#  myrabbitmq:
+#    image: rabbitmq:3.13.0-rc.1-management-alpine
+#    container_name: vergil-rabbitmq
+#    ports:
+#      - 5672:5672
+#      - 15672:15672
+#    environment:
+#      - RABBITMQ_DEFAULT_PASS=xyfs2023
+#      - RABBITMQ_DEFAULT_USER=vergil
+#    restart: always
 
   mymysql:
     build:
@@ -74,6 +84,11 @@ services:
     ports:
       - 3306:3306
     restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: 4
+          memory: 8G
     healthcheck:
       test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
       interval: 5s
@@ -134,6 +149,11 @@ services:
       - MINIO_ROOT_PASSWORD=xyfs2023
     volumes:
       - /mnt/data/vergil/minio:/data
+    deploy:
+      resources:
+        limits:
+          cpus: 4
+          memory: 8G
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
       interval: 30s
@@ -165,6 +185,11 @@ services:
       mymysql:
         condition: service_healthy
     restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: 4
+          memory: 8G
 #  sentinel:
 #    build:
 #      context: sentinel/
@@ -234,25 +259,25 @@ services:
 #      - "3000:3000"
 #    depends_on:
 #      - "milvus"
-  palu:
-    container_name: mypalu
-    image: jammsen/palworld-dedicated-server:latest
-    restart: unless-stopped
-    ports:
-      - target: 8211 # 容器内游戏端口
-        published: 8212 # 宿主机映射端口
-        protocol: udp
-        mode: host
-      - target: 25575 # RCON 容器内
-        published: 25575 # RCON 宿主机映射端口
-        protocol: tcp
-        mode: host
-    volumes:
-      - /mnt/data/palu:/palworld # volume自己去指定
-    env_file:
-      - ./palword.env
+#  palu:
+#    container_name: mypalu
+#    image: jammsen/palworld-dedicated-server:latest
+#    restart: unless-stopped
+#    ports:
+#      - target: 8211 # 容器内游戏端口
+#        published: 8212 # 宿主机映射端口
+#        protocol: udp
+#        mode: host
+#      - target: 25575 # RCON 容器内
+#        published: 25575 # RCON 宿主机映射端口
+#        protocol: tcp
+#        mode: host
+#    volumes:
+#      - /mnt/data/palu:/palworld # volume自己去指定
+#    env_file:
+#      - ./palword.env
 
-  rcon:
-    image: outdead/rcon:latest
-    entrypoint: ["/rcon", "-a", "113.141.90.115:25575", "-p", "xyfs2023"]
-    profiles: ["rcon"]
+#  rcon:
+#    image: outdead/rcon:latest
+#    entrypoint: ["/rcon", "-a", "113.141.90.115:25575", "-p", "xyfs2023"]
+#    profiles: ["rcon"]
