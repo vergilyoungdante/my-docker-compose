@@ -124,17 +124,6 @@ services:
 #networks:
 #  ek-net:
 #    driver: bridge
-#  mynacos:
-#    image: nacos/nacos-server:v2.2.3-slim
-#    container_name: mynacos
-#    ports:
-#      - 8848:8848
-#      - 9848:9848
-#    environment:
-#      - NACOS_AUTH_IDENTITY_KEY=123456
-#      - NACOS_AUTH_IDENTITY_VALUE=123456
-#      - NACOS_AUTH_TOKEN=MTIzNDU2Nzg5MTIzNDU2Nzg5MTIzNDU2Nzg5MTIzNDU2Nzg5
-#      - MODE=standalone
 
   minio:
     image: quay.io/minio/minio:RELEASE.2023-10-25T06-33-25Z
@@ -161,7 +150,7 @@ services:
       retries: 3
 
   mynacos:
-    image: nacos/nacos-server:v2.2.3
+    image: nacos/nacos-server:v2.3.2
     container_name: mynacos
     ports:
       - 8848:8848
@@ -175,7 +164,9 @@ services:
       - NACOS_AUTH_TOKEN=MTIzNDU2Nzg5MTIzNDU2Nzg5MTIzNDU2Nzg5MTIzNDU2Nzg5
       - MODE=standalone
       - SPRING_DATASOURCE_PLATFORM=mysql
-      - MYSQL_SERVICE_HOST=mymysql
+      # 必须给nacos配置公网IP，要不然注册的服务也拿不到公网IP
+      - NACOS_SERVER_IP=113.141.90.115
+      - MYSQL_SERVICE_HOST=113.141.90.115
       - MYSQL_SERVICE_DB_NAME=nacos_dev
       - MYSQL_SERVICE_PORT=3306
       - MYSQL_SERVICE_USER=nacosvergil
