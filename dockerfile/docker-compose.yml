@@ -189,6 +189,7 @@ services:
     container_name: mysentinel
     ports:
       - "8090:8090"
+      - "8719:8719"
     restart: unless-stopped
 
 #  myseata:
