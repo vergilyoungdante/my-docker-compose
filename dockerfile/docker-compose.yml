@@ -181,23 +181,15 @@ services:
         limits:
           cpus: 4
           memory: 8G
-#  sentinel:
-#    build:
-#      context: sentinel/
-#      dockerfile: sentinel.dockerfile
-#    image: sentinel
-#    container_name: sentinel
-#    ports:
-#      - "8090:8090"
-#    logging:
-#      driver: "json-file"
-#      options:
-#        max-size: "10m"
-#        max-file: "1"
-#    volumes:
-#      - /mnt/data/vergil/sentinel/logs:/root/logs
-#      - /mnt/data/vergil/sentinel/logs:/app-logs
-#    restart: always
+  sentinel:
+    build:
+      context: sentinel/
+      dockerfile: sentinel.dockerfile
+    image: mysentinel
+    container_name: mysentinel
+    ports:
+      - "8090:8090"
+    restart: unless-stopped
 
 #  myseata:
 #    image: seataio/seata-server:2.0.0.jre17
