@@ -54,16 +54,16 @@ services:
       timeout: 5s
       retries: 5
 
-#  myrabbitmq:
-#    image: rabbitmq:3.13.0-rc.1-management-alpine
-#    container_name: vergil-rabbitmq
-#    ports:
-#      - 5672:5672
-#      - 15672:15672
-#    environment:
-#      - RABBITMQ_DEFAULT_PASS=xyfs2023
-#      - RABBITMQ_DEFAULT_USER=vergil
-#    restart: always
+  myrabbitmq:
+    image: rabbitmq:3.13.2-management-alpine
+    container_name: vergil-rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      - RABBITMQ_DEFAULT_PASS=xyfs2023
+      - RABBITMQ_DEFAULT_USER=vergil
+    restart: always
 
   mymysql:
     build:
