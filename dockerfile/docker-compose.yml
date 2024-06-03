@@ -9,11 +9,11 @@ services:
     container_name: vergil-redis
     ports:
       - 6379:6379
-    deploy:
-      resources:
-        limits:
-          cpus: 4
-          memory: 8G
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: 4
+#          memory: 8G
     healthcheck:
       test: [ "CMD", "redis-cli","ping" ]
 #  myredisstack:
@@ -31,7 +31,7 @@ services:
 #      test: [ "CMD", "redis-cli","ping" ]
 
   mypostgres:
-    image: postgres:16.0-alpine3.18
+    image: postgres:16.3-alpine3.20
     container_name: vergil-postgres
     ports:
       - 5432:5432
@@ -43,11 +43,11 @@ services:
     volumes:
       - /mnt/data/vergil/postgres:/var/lib/postgresql/data
     restart: always
-    deploy:
-      resources:
-        limits:
-          cpus: 4
-          memory: 8G
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: 4
+#          memory: 8G
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready" ]
       interval: 10s
@@ -84,11 +84,11 @@ services:
     ports:
       - 3306:3306
     restart: always
-    deploy:
-      resources:
-        limits:
-          cpus: 4
-          memory: 8G
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: 4
+#          memory: 8G
     healthcheck:
       test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
       interval: 5s
@@ -181,16 +181,16 @@ services:
         limits:
           cpus: 4
           memory: 8G
-  sentinel:
-    build:
-      context: sentinel/
-      dockerfile: sentinel.dockerfile
-    image: mysentinel
-    container_name: mysentinel
-    ports:
-      - "8090:8090"
-      - "8719:8719"
-    restart: unless-stopped
+#  sentinel:
+#    build:
+#      context: sentinel/
+#      dockerfile: sentinel.dockerfile
+#    image: mysentinel
+#    container_name: mysentinel
+#    ports:
+#      - "8090:8090"
+#      - "8719:8719"
+#    restart: unless-stopped
 
 #  myseata:
 #    image: seataio/seata-server:2.0.0.jre17
