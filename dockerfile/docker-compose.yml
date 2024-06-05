@@ -4,6 +4,10 @@ networks:
   #给监控用的，node_exporter什么的不暴露外网
   monitor:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.18.0.0/16
+
 
 services:
 #  建议用redis-stack,这两个端口冲突，不能部署在同一台机器
@@ -307,6 +311,9 @@ services:
       - '--web.console.libraries=/etc/prometheus/console_libraries'
       - '--web.console.templates=/etc/prometheus/consoles'
       - '--web.enable-lifecycle'
+    # 监控docker用， https://docs.docker.com/config/daemon/prometheus
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       - monitor
 
