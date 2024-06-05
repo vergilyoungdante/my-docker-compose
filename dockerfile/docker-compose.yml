@@ -1,5 +1,10 @@
 version: "3"
 
+networks:
+  #给监控用的，node_exporter什么的不暴露外网
+  monitor:
+    driver: bridge
+
 services:
 #  建议用redis-stack,这两个端口冲突，不能部署在同一台机器
   myredis:
@@ -8,7 +13,7 @@ services:
       dockerfile: redis.dockerfile
     container_name: vergil-redis
     ports:
-      - 6379:6379
+      - 26379:6379
 #    deploy:
 #      resources:
 #        limits:
@@ -34,7 +39,7 @@ services:
     image: postgres:16.3-alpine3.20
     container_name: vergil-postgres
     ports:
-      - 5432:5432
+      - 25432:5432
     environment:
       POSTGRES_PASSWORD: xyfs2023
       POSTGRES_USER: postgres
@@ -58,8 +63,8 @@ services:
     image: rabbitmq:3.13.2-management-alpine
     container_name: vergil-rabbitmq
     ports:
-      - 5672:5672
-      - 15672:15672
+      - 25672:5672
+      - 35672:15672
     environment:
       - RABBITMQ_DEFAULT_PASS=xyfs2023
       - RABBITMQ_DEFAULT_USER=vergil
@@ -82,7 +87,7 @@ services:
       #容器的配置目录挂载到host物理机目录
       - /mnt/data/vergil/mysql/config:/etc/mysql/conf.d
     ports:
-      - 3306:3306
+      - 23306:3306
     restart: always
 #    deploy:
 #      resources:
@@ -130,8 +135,8 @@ services:
     privileged: true
     container_name: myminio
     ports:
-      - 9000:9000
-      - 9090:9090
+      - 29000:9000
+      - 29090:9090
     command: minio server /data --console-address ":9090"
     environment:
       - MINIO_ROOT_USER=vergil
@@ -153,8 +158,8 @@ services:
     image: nacos/nacos-server:v2.3.2
     container_name: mynacos
     ports:
-      - 8848:8848
-      - 9848:9848
+      - 28848:8848
+      - 29848:9848
     volumes:
       - /mnt/data/vergil/nacos:/home/nacos/logs
     environment:
@@ -165,10 +170,10 @@ services:
       - MODE=standalone
       - SPRING_DATASOURCE_PLATFORM=mysql
       # 必须给nacos配置公网IP，要不然注册的服务也拿不到公网IP
-      - NACOS_SERVER_IP=113.141.90.115
-      - MYSQL_SERVICE_HOST=113.141.90.115
+      - NACOS_SERVER_IP=223.72.5.68
+      - MYSQL_SERVICE_HOST=223.72.5.68
       - MYSQL_SERVICE_DB_NAME=nacos_dev
-      - MYSQL_SERVICE_PORT=3306
+      - MYSQL_SERVICE_PORT=23306
       - MYSQL_SERVICE_USER=nacosvergil
       - MYSQL_SERVICE_PASSWORD=nacosxyfs2023
       - MYSQL_SERVICE_DB_PARAM=characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true
@@ -265,3 +270,52 @@ services:
 #    image: outdead/rcon:latest
 #    entrypoint: ["/rcon", "-a", "113.141.90.115:25575", "-p", "xyfs2023"]
 #    profiles: ["rcon"]
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: node_exporter
+    hostname: node_exporter
+    ports:
+      - 29100:9100
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    restart: unless-stopped
+    networks:
+      - monitor
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    hostname: promethues
+    restart: unless-stopped
+    user: root
+    ports:
+      - 29091:9090
+    volumes:
+      - /mnt/data/monitor/config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - /mnt/data/monitor/prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention=7d'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    networks:
+      - monitor
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    hostname: grafana
+    restart: unless-stopped
+    ports:
+      - "23000:3000"
+    networks:
+      - monitor
