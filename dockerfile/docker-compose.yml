@@ -326,3 +326,21 @@ services:
       - "23000:3000"
     networks:
       - monitor
+
+  cadvisor:
+    image: google/cadvisor
+    container_name: cadvisor
+    hostname: cadvisor
+    ports:
+      - 28080:8080
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    privileged: true
+    devices:
+      - /dev/kmsg
+    networks:
+      - monitor

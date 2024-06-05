@@ -18,9 +18,15 @@ scrape_configs:
   - job_name: docker
     # metrics_path defaults to '/metrics'
     # scheme defaults to 'http'.
-
+    # 没有现成的grafana面板，只收集数据，不做可视化
     static_configs:
       - targets: [ "host.docker.internal:9323" ]
+
+  - job_name: cadvisor
+    scrape_interval: 5s
+    static_configs:
+      - targets:
+          - cadvisor:8080
 
 #本地grafana,没用云
 #remote_write:
