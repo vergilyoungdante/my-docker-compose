@@ -16,6 +16,8 @@ services:
       context: redis/
       dockerfile: redis.dockerfile
     container_name: vergil-redis
+    volumes:
+      - /mnt/data/vergil/redis:/data
     ports:
       - 26379:6379
 #    deploy:
@@ -349,3 +351,18 @@ services:
 #      - /dev/kmsg
 #    networks:
 #      - monitor
+  ollama:
+    image: ollama/ollama:0.1.42-rocm
+    container_name: ollama
+    hostname: ollama
+    restart: unless-stopped
+    user: root
+    volumes:
+      - /mnt/data/vergil/ollama:/root/.ollama
+    devices:
+      - /dev/kfd
+      - /dev/dri
+    ports:
+      - 31434:11434
+    networks:
+      - monitor
