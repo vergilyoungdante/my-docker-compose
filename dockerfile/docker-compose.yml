@@ -322,25 +322,30 @@ services:
     container_name: grafana
     hostname: grafana
     restart: unless-stopped
+    user: root
+    volumes:
+      - /mnt/data/monitor/grafana:/var/lib/grafana
     ports:
       - "23000:3000"
     networks:
       - monitor
 
-  cadvisor:
-    image: google/cadvisor
-    container_name: cadvisor
-    hostname: cadvisor
-    ports:
-      - 28080:8080
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:ro
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-      - /dev/disk/:/dev/disk:ro
-    privileged: true
-    devices:
-      - /dev/kmsg
-    networks:
-      - monitor
+  # 这个死活不管用，目前没有解决办法
+#  cadvisor:
+#    image: google/cadvisor
+#    container_name: cadvisor
+#    hostname: cadvisor
+#    user: root
+#    ports:
+#      - 28080:8080
+#    volumes:
+#      - /:/rootfs:ro
+#      - /var/run:/var/run:ro
+#      - /sys:/sys:ro
+#      - /var/lib/docker/:/var/lib/docker:ro
+#      - /dev/disk/:/dev/disk:ro
+#    privileged: true
+#    devices:
+#      - /dev/kmsg
+#    networks:
+#      - monitor
