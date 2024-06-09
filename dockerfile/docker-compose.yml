@@ -364,5 +364,21 @@ services:
       - /dev/dri
     ports:
       - 31434:11434
-    networks:
-      - monitor
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui
+    hostname: open-webui
+    restart: unless-stopped
+    volumes:
+      - /mnt/data/vergil/openwebui:/app/backend/data
+    ports:
+      - 28080:8080
+    environment:
+      - OLLAMA_BASE_URL=ollama:11434
+      - WEBUI_SECRET_KEY=TKCS@Pass1234!
+      - HF_ENDPOINT=https://hf-mirror.com
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    depends_on:
+      - ollama
