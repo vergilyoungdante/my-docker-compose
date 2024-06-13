@@ -16,6 +16,7 @@ services:
       context: redis/
       dockerfile: redis.dockerfile
     container_name: vergil-redis
+    hostname: vergil-redis
     volumes:
       - /mnt/data/vergil/redis:/data
     ports:
@@ -44,6 +45,9 @@ services:
   mypostgres:
     image: postgres:16.3-alpine3.20
     container_name: vergil-postgres
+    hostname: vergil-postgres
+    user: root
+    privileged: true
     ports:
       - 25432:5432
     environment:
@@ -375,12 +379,45 @@ services:
     volumes:
       - /mnt/data/vergil/openwebui:/app/backend/data
     ports:
-      - 28080:8080
+      - 28081:8081
     environment:
       - OLLAMA_BASE_URL=http://ollama:11434
       - WEBUI_SECRET_KEY=TKCS@Pass1234!
       - HF_ENDPOINT=https://hf-mirror.com
+      - PORT=8081
+      - DATABASE_URL=postgresql://ollama:ollama@vergil-postgres:5432/webui
+      - JWT_EXPIRES_IN=3600
+      - ENABLE_COMMUNITY_SHARING=False
+      - WEBUI_URL=http://searxng:8080
     extra_hosts:
       - host.docker.internal:host-gateway
     depends_on:
       - ollama
+
+  # 给大模型用的私有搜索引擎
+  searxng:
+    build:
+      context: searxng
+      dockerfile: searxng.dockerfile
+    container_name: searxng
+#    image: docker.io/searxng/searxng:latest
+    restart: unless-stopped
+    hostname: searxng
+    ports:
+      - "28080:8080"
+    volumes:
+      - /mnt/data/vergil/searxng:/etc/searxng:rw
+    environment:
+      - SEARXNG_BASE_URL=localhost:8080
+      - SEARXNG_REDIS_URL=redis://:xyfs2023@vergil-redis:6379/1
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "1"
