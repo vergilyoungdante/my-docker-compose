@@ -394,30 +394,30 @@ services:
     depends_on:
       - ollama
 
-  # 给大模型用的私有搜索引擎
-  searxng:
-    build:
-      context: searxng
-      dockerfile: searxng.dockerfile
-    container_name: searxng
-#    image: docker.io/searxng/searxng:latest
-    restart: unless-stopped
-    hostname: searxng
-    ports:
-      - "28080:8080"
-    volumes:
-      - /mnt/data/vergil/searxng:/etc/searxng:rw
-    environment:
-      - SEARXNG_BASE_URL=localhost:8080
-      - SEARXNG_REDIS_URL=redis://:xyfs2023@vergil-redis:6379/1
-    cap_drop:
-      - ALL
-    cap_add:
-      - CHOWN
-      - SETGID
-      - SETUID
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "1m"
-        max-file: "1"
+  # 给大模型用的私有搜索引擎,部署失败
+#  searxng:
+#    build:
+#      context: searxng
+#      dockerfile: searxng.dockerfile
+#    container_name: searxng
+##    image: docker.io/searxng/searxng:latest
+#    restart: unless-stopped
+#    hostname: searxng
+#    ports:
+#      - "28080:8080"
+#    volumes:
+#      - /mnt/data/vergil/searxng:/etc/searxng:rw
+#    environment:
+#      - SEARXNG_BASE_URL=localhost:8080
+#      - SEARXNG_REDIS_URL=redis://:xyfs2023@vergil-redis:6379/1
+#    cap_drop:
+#      - ALL
+#    cap_add:
+#      - CHOWN
+#      - SETGID
+#      - SETUID
+#    logging:
+#      driver: "json-file"
+#      options:
+#        max-size: "1m"
+#        max-file: "1"
