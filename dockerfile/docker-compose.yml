@@ -1,4 +1,3 @@
-version: "3"
 
 networks:
   #给监控用的，node_exporter什么的不暴露外网
@@ -68,6 +67,10 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   myrabbitmq:
     image: rabbitmq:3.13.2-management-alpine
@@ -258,32 +261,32 @@ services:
 #      - "3000:3000"
 #    depends_on:
 #      - "milvus"
-  palu:
-    container_name: mypalu
-    image: jammsen/palworld-dedicated-server:latest
-    restart: unless-stopped
-    logging:
-      driver: "local"
-      options:
-        max-size: "10m"
-        max-file: "3"
-    ports:
-      - target: 8211 # 容器内游戏端口
-        published: 28211 # 宿主机映射端口
-        protocol: udp
-        mode: host
-      - target: 8212 # Gameserver API port inside of the container
-        published: 28212 # Gameserver API port on your host
-        protocol: tcp
-        mode: host
-      - target: 25575 # RCON 容器内
-        published: 25575 # RCON 宿主机映射端口
-        protocol: tcp
-        mode: host
-    volumes:
-      - /mnt/data/palu:/palworld # volume自己去指定
-    env_file:
-      - ./palword.env
+#  palu:
+#    container_name: mypalu
+#    image: jammsen/palworld-dedicated-server:latest
+#    restart: unless-stopped
+#    logging:
+#      driver: "local"
+#      options:
+#        max-size: "10m"
+#        max-file: "3"
+#    ports:
+#      - target: 8211 # 容器内游戏端口
+#        published: 28211 # 宿主机映射端口
+#        protocol: udp
+#        mode: host
+#      - target: 8212 # Gameserver API port inside of the container
+#        published: 28212 # Gameserver API port on your host
+#        protocol: tcp
+#        mode: host
+#      - target: 25575 # RCON 容器内
+#        published: 25575 # RCON 宿主机映射端口
+#        protocol: tcp
+#        mode: host
+#    volumes:
+#      - /mnt/data/palu:/palworld # volume自己去指定
+#    env_file:
+#      - ./palword.env
 
 #  rcon:
 #    image: outdead/rcon:latest
@@ -454,3 +457,65 @@ services:
 #      - 23389:3389/tcp
 #      - 23389:3389/udp
 #    stop_grace_period: 2m
+  mygitlab:
+    image: gitlab/gitlab-ce:17.3.1-ce.0
+    container_name: gitlab
+    user: root
+#    restart: always
+    hostname: 223.72.5.68
+    ports:
+      - '20080:80'
+      - '20443:443'
+      - '20222:22'
+    environment:
+        TZ: 'Asia/Shanghai'
+        GITLAB_OMNIBUS_CONFIG: |
+          registry_external_url 'http://223.72.5.68:20080'
+          gitlab_rails['time_zone'] = 'Asia/Shanghai'
+          gitlab_rails['initial_root_password'] = 'xyfs2023'
+          postgresql['enable'] = false 
+          gitlab_rails['db_adapter'] = 'postgresql'
+          gitlab_rails['db_encoding'] = 'utf8'
+          gitlab_rails['db_host'] = 'vergil-postgres'
+          gitlab_rails['db_port'] = 5432
+          gitlab_rails['db_username'] = 'gitlab'
+          gitlab_rails['db_password'] = 'xyfs2023'
+          gitlab_rails['gitlab_email_from'] = 'yjb387759719@outlook.com'
+          gitlab_rails['gitlab_email_reply_to'] = 'yjb387759719@outlook.com'
+          gitlab_rails['microsoft_graph_mailer_enabled'] = false
+          logging['logrotate_frequency'] = "daily"
+          logging['logrotate_rotate'] = 30
+          logging['logrotate_compress'] = "compress"
+          logging['logrotate_method'] = "copytruncate"
+          redis['enable'] = false
+          gitlab_rails['redis_host'] = 'vergil-redis'
+          gitlab_rails['redis_port'] = 6379
+          gitlab_rails['redis_password'] = 'xyfs2023'
+          gitlab_rails['smtp_enable'] = true
+          gitlab_rails['smtp_address'] = "smtp-mail.outlook.com"
+          gitlab_rails['smtp_port'] = 587
+          gitlab_rails['smtp_user_name'] = "yjb387759719@outlook.com"
+          gitlab_rails['smtp_password'] = "19921115ctzL!"
+          gitlab_rails['smtp_domain'] = "smtp-mail.outlook.com"
+          gitlab_rails['smtp_authentication'] = "login"
+          gitlab_rails['smtp_enable_starttls_auto'] = true
+          gitlab_rails['smtp_openssl_verify_mode'] = 'peer'
+          gitlab_shell['log_format'] = 'text'
+          gitlab_workhorse['log_format'] = 'text'
+          registry['log_formatter'] = 'text'
+          sidekiq['log_format'] = 'text'
+          gitlab_pages['log_format'] = 'text'
+          registry['log_level'] = 'info'
+          gitlab_shell['log_level'] = 'INFO'
+          prometheus['enable'] = false
+          gitlab_exporter['enable'] = false
+          prometheus_monitoring['enable'] = false
+          sidekiq['metrics_enabled'] = false
+          puma['exporter_enabled'] = false
+          nginx['enable'] = false
+          gitlab_workhorse['listen_network'] = "tcp"
+          gitlab_workhorse['listen_addr'] = "0.0.0.0:80"
+    volumes:
+      - /mnt/data/vergil/gitlab:/etc/gitlab
+      - /mnt/data/vergil/gitlab:/var/log/gitlab
+      - /mnt/data/vergil/gitlab:/var/opt/gitlab
