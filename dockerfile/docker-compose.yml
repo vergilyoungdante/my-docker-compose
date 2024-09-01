@@ -42,7 +42,7 @@ services:
 #      test: [ "CMD", "redis-cli","ping" ]
 
   mypostgres:
-    image: postgres:16.3-alpine3.20
+    image: postgres:16.4
     container_name: vergil-postgres
     hostname: vergil-postgres
     user: root
@@ -73,7 +73,7 @@ services:
         max-file: "3"
 
   myrabbitmq:
-    image: rabbitmq:3.13.2-management-alpine
+    image: rabbitmq:3.13.7-management-alpine
     container_name: vergil-rabbitmq
     ports:
       - 25672:5672
@@ -144,7 +144,7 @@ services:
 #    driver: bridge
 
   minio:
-    image: quay.io/minio/minio:RELEASE.2024-05-07T06-41-25Z
+    image: quay.io/minio/minio:latest
     privileged: true
     container_name: myminio
     ports:
@@ -168,7 +168,7 @@ services:
       retries: 3
 
   mynacos:
-    image: nacos/nacos-server:v2.3.2
+    image: nacos/nacos-server:v2.4.1
     container_name: mynacos
     ports:
       - 28848:8848
@@ -368,7 +368,7 @@ services:
 #    networks:
 #      - monitor
   ollama:
-    image: ollama/ollama:0.1.42-rocm
+    image: ollama/ollama:0.3.8-rocm
     container_name: ollama
     hostname: ollama
     restart: unless-stopped
