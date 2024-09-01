@@ -519,6 +519,7 @@ services:
       - /mnt/data/vergil/gitlab:/etc/gitlab
       - /mnt/data/vergil/gitlab:/var/log/gitlab
       - /mnt/data/vergil/gitlab:/var/opt/gitlab
+
   rimworld:
     image: ihavespoons/rimworld-together
     ports:
