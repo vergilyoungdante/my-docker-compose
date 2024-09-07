@@ -17,7 +17,7 @@
 # Related configuration of etcd, used to store Milvus metadata & service discovery.
 etcd:
   endpoints:
-    - localhost:2379
+    - milvus-etcd:2379
   rootPath: by-dev # The root path where data is stored in etcd
   metaSubPath: meta # metaRootPath = rootPath + '/' + metaSubPath
   kvSubPath: kv # kvRootPath = rootPath + '/' + kvSubPath
@@ -74,9 +74,9 @@ minio:
   address: localhost # Address of MinIO/S3
   port: 9000   # Port of MinIO/S3
   accessKeyID: vergil # accessKeyID of MinIO/S3
-  secretAccessKey: 19921115 # MinIO/S3 encryption string
+  secretAccessKey: xyfs2023 # MinIO/S3 encryption string
   useSSL: false # Access to MinIO/S3 with SSL
-  bucketName: "a-bucket" # Bucket name in MinIO/S3
+  bucketName: "mivlus" # Bucket name in MinIO/S3
   rootPath: files # The root path where the message is stored in MinIO/S3
   # Whether to use IAM role to access S3/GCS instead of access/secret keys
   # For more infomation, refer to
@@ -357,7 +357,7 @@ dataNode:
 
 # Configures the system log output.
 log:
-  level: debug # Only supports debug, info, warn, error, panic, or fatal. Default 'info'.
+  level: info # Only supports debug, info, warn, error, panic, or fatal. Default 'info'.
   stdout: "true" # default true, print log to stdout
   file:
     # please adjust in embedded Milvus: /tmp/milvus/logs
