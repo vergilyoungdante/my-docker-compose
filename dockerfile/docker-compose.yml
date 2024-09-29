@@ -73,7 +73,7 @@ services:
         max-file: "3"
 
   myrabbitmq:
-    image: rabbitmq:3.13.7-management-alpine
+    image: rabbitmq:4.0.2-management-alpine
     container_name: vergil-rabbitmq
     ports:
       - 25672:5672
@@ -168,7 +168,7 @@ services:
       retries: 3
 
   mynacos:
-    image: nacos/nacos-server:v2.4.1
+    image: nacos/nacos-server:v2.4.2.1
     container_name: mynacos
     ports:
       - 28848:8848
@@ -472,7 +472,7 @@ services:
 #      - 23389:3389/udp
 #    stop_grace_period: 2m
   mygitlab:
-    image: gitlab/gitlab-ce:17.3.1-ce.0
+    image: gitlab/gitlab-ce:17.4.1-ce.0
     container_name: gitlab
     user: root
 #    restart: always
@@ -534,12 +534,12 @@ services:
       - /mnt/data/vergil/gitlab:/var/log/gitlab
       - /mnt/data/vergil/gitlab:/var/opt/gitlab
 
-  rimworld:
-    image: ihavespoons/rimworld-together
-    ports:
-      - 25555:25555
-    volumes:
-      - /mnt/data/wangyb80/rimworld:/Data
+#  rimworld:
+#    image: ihavespoons/rimworld-together
+#    ports:
+#      - 25555:25555
+#    volumes:
+#      - /mnt/data/wangyb80/rimworld:/Data
 
 # 下面是dify
   dify-api:
