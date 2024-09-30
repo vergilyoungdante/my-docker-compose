@@ -72,6 +72,37 @@ services:
         max-size: "10m"
         max-file: "3"
 
+  mypostgres17:
+    image: postgres:17.0
+    container_name: vergil-postgres17
+    hostname: vergil-postgres17
+    user: root
+    privileged: true
+    ports:
+      - 25433:5433
+    environment:
+      POSTGRES_PASSWORD: xyfs2023
+      POSTGRES_USER: postgres
+      TZ: Asia/Shanghai
+      PGTZ: Asia/Shanghai
+    volumes:
+      - /mnt/data/vergil/postgres17:/var/lib/postgresql/data
+    restart: always
+    #    deploy:
+    #      resources:
+    #        limits:
+    #          cpus: 4
+    #          memory: 8G
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+
   myrabbitmq:
     image: rabbitmq:4.0.2-management-alpine
     container_name: vergil-rabbitmq
