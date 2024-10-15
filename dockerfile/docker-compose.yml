@@ -230,6 +230,7 @@ services:
         limits:
           cpus: 4
           memory: 8G
+
 #  sentinel:
 #    build:
 #      context: sentinel/
@@ -295,8 +296,7 @@ services:
     depends_on:
       - "minio"
       - "etcd"
-#
-#
+
 #  attu:
 #    container_name: attu
 #    image: zilliz/attu:v2.2.3
@@ -306,6 +306,7 @@ services:
 #      - "3000:3000"
 #    depends_on:
 #      - "milvus"
+
 #  palu:
 #    container_name: mypalu
 #    image: jammsen/palworld-dedicated-server:latest
@@ -337,6 +338,7 @@ services:
 #    image: outdead/rcon:latest
 #    entrypoint: ["/rcon", "-a", "113.141.90.115:25575", "-p", "xyfs2023"]
 #    profiles: ["rcon"]
+
   node_exporter:
     image: quay.io/prometheus/node-exporter:latest
     container_name: node_exporter
@@ -412,6 +414,7 @@ services:
 #      - /dev/kmsg
 #    networks:
 #      - monitor
+
   ollama:
     image: ollama/ollama:0.3.8-rocm
     container_name: ollama
@@ -478,7 +481,7 @@ services:
 #      options:
 #        max-size: "1m"
 #        max-file: "1"
-#
+
 #  这个太占内存了，权限管理不行，不太实用
   windows:
     image: dockurr/windows
@@ -502,6 +505,7 @@ services:
       - 23389:3389/tcp
       - 23389:3389/udp
     stop_grace_period: 2m
+
   mygitlab:
     image: gitlab/gitlab-ce:17.4.1-ce.0
     container_name: gitlab
@@ -565,70 +569,63 @@ services:
       - /mnt/data/vergil/gitlab:/var/log/gitlab
       - /mnt/data/vergil/gitlab:/var/opt/gitlab
 
-#  rimworld:
-#    image: ihavespoons/rimworld-together
-#    ports:
-#      - 25555:25555
+## 下面是dify
+#  dify-api:
+#    image: langgenius/dify-api:0.7.3
+#    hostname: dify_api
+##    restart: always
+#    environment:
+#      # Startup mode, 'api' starts the API server.
+#      MODE: api
+#    depends_on:
+#      - mypostgres
+#      - myredisstack
 #    volumes:
-#      - /mnt/data/wangyb80/rimworld:/Data
-
-# 下面是dify
-  dify-api:
-    image: langgenius/dify-api:0.7.3
-    hostname: dify_api
+#      # Mount the storage directory to the container, for storing user files.
+#      - /mnt/data/vergil/dify/storage:/app/api/storage
+#    extra_hosts:
+#      - host.docker.internal:host-gateway
+#    env_file:
+#      - dify/dify.env
+#
+#  dify-worker:
+#    image: langgenius/dify-api:0.7.3
+#    hostname: dify_worker
+##    restart: always
+#    environment:
+#      # Startup mode, 'worker' starts the Celery worker for processing the queue.
+#      MODE: worker
+#    depends_on:
+#      - mypostgres
+#      - myredisstack
+#    volumes:
+#      # Mount the storage directory to the container, for storing user files.
+#      - /mnt/data/vergil/dify/storage:/app/api/storage
+#    extra_hosts:
+#      - host.docker.internal:host-gateway
+#    env_file:
+#      - dify/dify.env
+#
+#  dify-web:
+#    image: langgenius/dify-web:0.7.3
+#    hostname: dify-web
+#    extra_hosts:
+#      - host.docker.internal:host-gateway
+##    restart: always
+#    env_file:
+#      - dify/dify.env
+#
+#  # The nginx reverse proxy.
+#  # used for reverse proxying the API service and Web service.
+#  nginx:
+#    image: nginx:latest
 #    restart: always
-    environment:
-      # Startup mode, 'api' starts the API server.
-      MODE: api
-    depends_on:
-      - mypostgres
-      - myredisstack
-    volumes:
-      # Mount the storage directory to the container, for storing user files.
-      - /mnt/data/vergil/dify/storage:/app/api/storage
-    extra_hosts:
-      - host.docker.internal:host-gateway
-    env_file:
-      - dify/dify.env
-
-  dify-worker:
-    image: langgenius/dify-api:0.7.3
-    hostname: dify_worker
-#    restart: always
-    environment:
-      # Startup mode, 'worker' starts the Celery worker for processing the queue.
-      MODE: worker
-    depends_on:
-      - mypostgres
-      - myredisstack
-    volumes:
-      # Mount the storage directory to the container, for storing user files.
-      - /mnt/data/vergil/dify/storage:/app/api/storage
-    extra_hosts:
-      - host.docker.internal:host-gateway
-    env_file:
-      - dify/dify.env
-
-  dify-web:
-    image: langgenius/dify-web:0.7.3
-    hostname: dify-web
-    extra_hosts:
-      - host.docker.internal:host-gateway
-#    restart: always
-    env_file:
-      - dify/dify.env
-
-  # The nginx reverse proxy.
-  # used for reverse proxying the API service and Web service.
-  nginx:
-    image: nginx:latest
-    restart: always
-    volumes:
-      - /mnt/data/vergil/dify/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - /mnt/data/vergil/dify/nginx/proxy.conf:/etc/nginx/proxy.conf
-      - /mnt/data/vergil/dify/nginx/conf.d:/etc/nginx/conf.d
-    depends_on:
-      - dify-api
-      - dify-web
-    ports:
-      - "30080:80"
+#    volumes:
+#      - /mnt/data/vergil/dify/nginx/nginx.conf:/etc/nginx/nginx.conf
+#      - /mnt/data/vergil/dify/nginx/proxy.conf:/etc/nginx/proxy.conf
+#      - /mnt/data/vergil/dify/nginx/conf.d:/etc/nginx/conf.d
+#    depends_on:
+#      - dify-api
+#      - dify-web
+#    ports:
+#      - "30080:80"
