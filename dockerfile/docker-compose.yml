@@ -79,7 +79,7 @@ services:
     user: root
     privileged: true
     ports:
-      - 25433:5433
+      - 25433:5432
     environment:
       POSTGRES_PASSWORD: xyfs2023
       POSTGRES_USER: postgres
@@ -480,28 +480,28 @@ services:
 #        max-file: "1"
 #
 #  这个太占内存了，权限管理不行，不太实用
-#  windows:
-#    image: dockurr/windows
-#    container_name: windows
-#    environment:
-#      VERSION: "win11"
-#      DISK_SIZE: "256G"
-#      RAM_SIZE: "16G"
-#      CPU_CORES: "6"
-#      USERNAME: "vergil"
-#      PASSWORD: "921115"
-#    devices:
-#      - /dev/kvm
-#    cap_add:
-#      - NET_ADMIN
-#    volumes:
-#      - /mnt/data/windows:/storage
-#      - /mnt/data/shared:/shared
-#    ports:
-#      - 28006:8006
-#      - 23389:3389/tcp
-#      - 23389:3389/udp
-#    stop_grace_period: 2m
+  windows:
+    image: dockurr/windows
+    container_name: windows
+    environment:
+      VERSION: "win11"
+      DISK_SIZE: "256G"
+      RAM_SIZE: "16G"
+      CPU_CORES: "6"
+      USERNAME: "vergil"
+      PASSWORD: "921115"
+    devices:
+      - /dev/kvm
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - /mnt/data/windows:/storage
+      - /mnt/data/shared:/shared
+    ports:
+      - 28006:8006
+      - 23389:3389/tcp
+      - 23389:3389/udp
+    stop_grace_period: 2m
   mygitlab:
     image: gitlab/gitlab-ce:17.4.1-ce.0
     container_name: gitlab
