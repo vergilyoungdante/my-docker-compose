@@ -40,9 +40,13 @@ services:
       - /mnt/data/vergil/redis:/data
     healthcheck:
       test: [ "CMD", "redis-cli","ping" ]
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   mypostgres:
-    image: postgres:16.4
+    image: postgres:17.0
     container_name: vergil-postgres
     hostname: vergil-postgres
     user: root
@@ -72,37 +76,6 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  mypostgres17:
-    image: postgres:17.0
-    container_name: vergil-postgres17
-    hostname: vergil-postgres17
-    user: root
-    privileged: true
-    ports:
-      - 25433:5432
-    environment:
-      POSTGRES_PASSWORD: xyfs2023
-      POSTGRES_USER: postgres
-      TZ: Asia/Shanghai
-      PGTZ: Asia/Shanghai
-    volumes:
-      - /mnt/data/vergil/postgres17:/var/lib/postgresql/data
-    restart: always
-    #    deploy:
-    #      resources:
-    #        limits:
-    #          cpus: 4
-    #          memory: 8G
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    logging:
-      options:
-        max-size: "10m"
-        max-file: "3"
-
   myrabbitmq:
     image: rabbitmq:4.0.2-management-alpine
     container_name: vergil-rabbitmq
@@ -113,6 +86,10 @@ services:
       - RABBITMQ_DEFAULT_PASS=xyfs2023
       - RABBITMQ_DEFAULT_USER=vergil
     restart: always
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   mymysql:
     build:
@@ -143,6 +120,10 @@ services:
       interval: 5s
       timeout: 10s
       retries: 10
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 #  myelasticsearch:
 #    image: elasticsearch:8.6.1
@@ -197,6 +178,10 @@ services:
       interval: 30s
       timeout: 20s
       retries: 3
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   mynacos:
     image: nacos/nacos-server:v2.4.2.1
@@ -225,11 +210,15 @@ services:
       mymysql:
         condition: service_healthy
     restart: always
-    deploy:
-      resources:
-        limits:
-          cpus: 4
-          memory: 8G
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: 4
+#          memory: 8G
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 #  sentinel:
 #    build:
@@ -253,49 +242,51 @@ services:
 #      - SEATA_PORT=8091
 #      - TZ=Asia/Shanghai
 
-  etcd:
-    container_name: milvus-etcd
-    image: quay.io/coreos/etcd:v3.5.5
-    hostname: milvus-etcd
-    environment:
-      - ETCD_AUTO_COMPACTION_MODE=revision
-      - ETCD_AUTO_COMPACTION_RETENTION=1000
-      - ETCD_QUOTA_BACKEND_BYTES=4294967296
-      - ETCD_SNAPSHOT_COUNT=50000
-    volumes:
-      - /mnt/data/vergil/etcd:/etcd
-    command: etcd -advertise-client-urls=http://127.0.0.1:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir /etcd
-    healthcheck:
-      test: [ "CMD", "etcdctl", "endpoint", "health" ]
-      interval: 30s
-      timeout: 20s
-      retries: 3
+# 不用milvus了，停用etcd
+#  etcd:
+#    container_name: milvus-etcd
+#    image: quay.io/coreos/etcd:v3.5.5
+#    hostname: milvus-etcd
+#    environment:
+#      - ETCD_AUTO_COMPACTION_MODE=revision
+#      - ETCD_AUTO_COMPACTION_RETENTION=1000
+#      - ETCD_QUOTA_BACKEND_BYTES=4294967296
+#      - ETCD_SNAPSHOT_COUNT=50000
+#    volumes:
+#      - /mnt/data/vergil/etcd:/etcd
+#    command: etcd -advertise-client-urls=http://127.0.0.1:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir /etcd
+#    healthcheck:
+#      test: [ "CMD", "etcdctl", "endpoint", "health" ]
+#      interval: 30s
+#      timeout: 20s
+#      retries: 3
 
-  milvus:
-    build:
-      context: milvus/
-      dockerfile: milvus.dockerfile
-#    image: milvusdb/milvus:v2.4.10
-    container_name: milvus-standalone
-    hostname: milvus-standalone
-    command: ["milvus", "run", "standalone"]
-    environment:
-      ETCD_ENDPOINTS: etcd:2379
-      MINIO_ADDRESS: minio:9000
-    volumes:
-      - /mnt/data/vergil/milvus:/var/lib/milvus
-    ports:
-      - "39530:19530"
-      - "39091:9091"
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:9091/healthz" ]
-      interval: 30s
-      start_period: 90s
-      timeout: 20s
-      retries: 3
-    depends_on:
-      - "minio"
-      - "etcd"
+#不用dify了,停掉milvus
+#  milvus:
+#    build:
+#      context: milvus/
+#      dockerfile: milvus.dockerfile
+##    image: milvusdb/milvus:v2.4.10
+#    container_name: milvus-standalone
+#    hostname: milvus-standalone
+#    command: ["milvus", "run", "standalone"]
+#    environment:
+#      ETCD_ENDPOINTS: etcd:2379
+#      MINIO_ADDRESS: minio:9000
+#    volumes:
+#      - /mnt/data/vergil/milvus:/var/lib/milvus
+#    ports:
+#      - "39530:19530"
+#      - "39091:9091"
+#    healthcheck:
+#      test: [ "CMD", "curl", "-f", "http://localhost:9091/healthz" ]
+#      interval: 30s
+#      start_period: 90s
+#      timeout: 20s
+#      retries: 3
+#    depends_on:
+#      - "minio"
+#      - "etcd"
 
 #  attu:
 #    container_name: attu
@@ -357,6 +348,10 @@ services:
     restart: unless-stopped
     networks:
       - monitor
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   prometheus:
     image: prom/prometheus:latest
@@ -381,6 +376,10 @@ services:
       - "host.docker.internal:host-gateway"
     networks:
       - monitor
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   grafana:
     image: grafana/grafana
@@ -394,6 +393,10 @@ services:
       - "23000:3000"
     networks:
       - monitor
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   # 这个死活不管用，目前没有解决办法
 #  cadvisor:
@@ -430,6 +433,10 @@ services:
       - 31434:11434
     extra_hosts:
       - host.docker.internal:host-gateway
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   open-webui:
     image: ghcr.io/open-webui/open-webui:main
@@ -453,6 +460,10 @@ services:
       - host.docker.internal:host-gateway
     depends_on:
       - ollama
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   # 给大模型用的私有搜索引擎,部署失败
 #  searxng:
@@ -505,9 +516,13 @@ services:
       - 23389:3389/tcp
       - 23389:3389/udp
     stop_grace_period: 2m
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   mygitlab:
-    image: gitlab/gitlab-ce:17.4.1-ce.0
+    image: gitlab/gitlab-ce:17.5.0-ce.0
     container_name: gitlab
     user: root
 #    restart: always
@@ -568,6 +583,10 @@ services:
       - /mnt/data/vergil/gitlab:/etc/gitlab
       - /mnt/data/vergil/gitlab:/var/log/gitlab
       - /mnt/data/vergil/gitlab:/var/opt/gitlab
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 ## 下面是dify
 #  dify-api:
