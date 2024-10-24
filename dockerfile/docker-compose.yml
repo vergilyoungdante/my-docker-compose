@@ -199,7 +199,7 @@ services:
       retries: 3
 
   mynacos:
-    image: nacos/nacos-server:v2.4.2.1
+    image: nacos/nacos-server:v2.4.3
     container_name: mynacos
     ports:
       - 28848:8848
