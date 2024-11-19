@@ -663,9 +663,10 @@ services:
     image: nginx:latest
     restart: always
     volumes:
-      - /mnt/data/vergil/dify/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - /mnt/data/vergil/dify/nginx/proxy.conf:/etc/nginx/proxy.conf
-      - /mnt/data/vergil/dify/nginx/conf.d:/etc/nginx/conf.d
+      - ./mnt/data/vergil/dify/nginx/nginx.conf.template:/etc/nginx/nginx.conf.template
+      - ./mnt/data/vergil/dify/nginx/proxy.conf.template:/etc/nginx/proxy.conf.template
+      - ./mnt/data/vergil/dify/nginx/conf.d:/etc/nginx/conf.d
+      - ./mnt/data/vergil/dify/nginx/docker-entrypoint.sh:/docker-entrypoint-mount.sh
     depends_on:
       - dify-api
       - dify-web
