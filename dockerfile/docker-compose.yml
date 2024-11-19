@@ -40,9 +40,13 @@ services:
       - /mnt/data/vergil/redis:/data
     healthcheck:
       test: [ "CMD", "redis-cli","ping" ]
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   mypostgres:
-    image: postgres:16.4
+    image: postgres:17.1
     container_name: vergil-postgres
     hostname: vergil-postgres
     user: root
@@ -72,39 +76,8 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  mypostgres17:
-    image: postgres:17.0
-    container_name: vergil-postgres17
-    hostname: vergil-postgres17
-    user: root
-    privileged: true
-    ports:
-      - 25433:5432
-    environment:
-      POSTGRES_PASSWORD: xyfs2023
-      POSTGRES_USER: postgres
-      TZ: Asia/Shanghai
-      PGTZ: Asia/Shanghai
-    volumes:
-      - /mnt/data/vergil/postgres17:/var/lib/postgresql/data
-    restart: always
-    #    deploy:
-    #      resources:
-    #        limits:
-    #          cpus: 4
-    #          memory: 8G
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    logging:
-      options:
-        max-size: "10m"
-        max-file: "3"
-
   myrabbitmq:
-    image: rabbitmq:4.0.2-management-alpine
+    image: rabbitmq:4.1-rc-management
     container_name: vergil-rabbitmq
     ports:
       - 25672:5672
@@ -113,6 +86,10 @@ services:
       - RABBITMQ_DEFAULT_PASS=xyfs2023
       - RABBITMQ_DEFAULT_USER=vergil
     restart: always
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   mymysql:
     build:
@@ -143,6 +120,10 @@ services:
       interval: 5s
       timeout: 10s
       retries: 10
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 #  myelasticsearch:
 #    image: elasticsearch:8.6.1
@@ -197,6 +178,10 @@ services:
       interval: 30s
       timeout: 20s
       retries: 3
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   mynacos:
     image: nacos/nacos-server:v2.4.3
@@ -214,8 +199,8 @@ services:
       - MODE=standalone
       - SPRING_DATASOURCE_PLATFORM=mysql
       # 必须给nacos配置公网IP，要不然注册的服务也拿不到公网IP
-      - NACOS_SERVER_IP=223.72.5.68
-      - MYSQL_SERVICE_HOST=223.72.5.68
+      - NACOS_SERVER_IP=223.72.5.112
+      - MYSQL_SERVICE_HOST=223.72.5.112
       - MYSQL_SERVICE_DB_NAME=nacos_dev
       - MYSQL_SERVICE_PORT=23306
       - MYSQL_SERVICE_USER=nacosvergil
@@ -225,11 +210,15 @@ services:
       mymysql:
         condition: service_healthy
     restart: always
-    deploy:
-      resources:
-        limits:
-          cpus: 4
-          memory: 8G
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: 4
+#          memory: 8G
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 #  sentinel:
 #    build:
@@ -253,9 +242,10 @@ services:
 #      - SEATA_PORT=8091
 #      - TZ=Asia/Shanghai
 
+# 不用milvus了，停用etcd
   etcd:
     container_name: milvus-etcd
-    image: quay.io/coreos/etcd:v3.5.5
+    image: quay.io/coreos/etcd:v3.5.14
     hostname: milvus-etcd
     environment:
       - ETCD_AUTO_COMPACTION_MODE=revision
@@ -270,7 +260,12 @@ services:
       interval: 30s
       timeout: 20s
       retries: 3
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
+#不用dify了,停掉milvus
   milvus:
     build:
       context: milvus/
@@ -293,6 +288,10 @@ services:
       start_period: 90s
       timeout: 20s
       retries: 3
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
     depends_on:
       - "minio"
       - "etcd"
@@ -357,6 +356,10 @@ services:
     restart: unless-stopped
     networks:
       - monitor
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   prometheus:
     image: prom/prometheus:latest
@@ -381,6 +384,10 @@ services:
       - "host.docker.internal:host-gateway"
     networks:
       - monitor
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   grafana:
     image: grafana/grafana
@@ -394,6 +401,10 @@ services:
       - "23000:3000"
     networks:
       - monitor
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   # 这个死活不管用，目前没有解决办法
 #  cadvisor:
@@ -416,7 +427,7 @@ services:
 #      - monitor
 
   ollama:
-    image: ollama/ollama:0.3.8-rocm
+    image: ollama/ollama:0.4.2
     container_name: ollama
     hostname: ollama
     restart: unless-stopped
@@ -430,6 +441,10 @@ services:
       - 31434:11434
     extra_hosts:
       - host.docker.internal:host-gateway
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   open-webui:
     image: ghcr.io/open-webui/open-webui:main
@@ -453,6 +468,10 @@ services:
       - host.docker.internal:host-gateway
     depends_on:
       - ollama
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   # 给大模型用的私有搜索引擎,部署失败
 #  searxng:
@@ -483,35 +502,39 @@ services:
 #        max-file: "1"
 
 #  这个太占内存了，权限管理不行，不太实用
-  windows:
-    image: dockurr/windows
-    container_name: windows
-    environment:
-      VERSION: "win11"
-      DISK_SIZE: "256G"
-      RAM_SIZE: "16G"
-      CPU_CORES: "6"
-      USERNAME: "vergil"
-      PASSWORD: "921115"
-    devices:
-      - /dev/kvm
-    cap_add:
-      - NET_ADMIN
-    volumes:
-      - /mnt/data/windows:/storage
-      - /mnt/data/shared:/shared
-    ports:
-      - 28006:8006
-      - 23389:3389/tcp
-      - 23389:3389/udp
-    stop_grace_period: 2m
+#  windows:
+#    image: dockurr/windows
+#    container_name: windows
+#    environment:
+#      VERSION: "win11"
+#      DISK_SIZE: "256G"
+#      RAM_SIZE: "16G"
+#      CPU_CORES: "6"
+#      USERNAME: "vergil"
+#      PASSWORD: "921115"
+#    devices:
+#      - /dev/kvm
+#    cap_add:
+#      - NET_ADMIN
+#    volumes:
+#      - /mnt/data/windows:/storage
+#      - /mnt/data/shared:/shared
+#    ports:
+#      - 28006:8006
+#      - 23389:3389/tcp
+#      - 23389:3389/udp
+#    stop_grace_period: 2m
+#    logging:
+#      options:
+#        max-size: "10m"
+#        max-file: "3"
 
   mygitlab:
-    image: gitlab/gitlab-ce:17.4.1-ce.0
+    image: gitlab/gitlab-ce:17.5.2-ce.0
     container_name: gitlab
     user: root
 #    restart: always
-    hostname: 223.72.5.68
+    hostname: 223.72.5.112
     ports:
       - '20080:80'
       - '20443:443'
@@ -519,7 +542,7 @@ services:
     environment:
         TZ: 'Asia/Shanghai'
         GITLAB_OMNIBUS_CONFIG: |
-          registry_external_url 'http://223.72.5.68:20080'
+          registry_external_url 'http://223.72.5.112:20080'
           gitlab_rails['time_zone'] = 'Asia/Shanghai'
           gitlab_rails['initial_root_password'] = 'xyfs2023'
           postgresql['enable'] = false 
@@ -568,64 +591,87 @@ services:
       - /mnt/data/vergil/gitlab:/etc/gitlab
       - /mnt/data/vergil/gitlab:/var/log/gitlab
       - /mnt/data/vergil/gitlab:/var/opt/gitlab
+    depends_on:
+      - mypostgres
+      - myredisstack
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
-## 下面是dify
-#  dify-api:
-#    image: langgenius/dify-api:0.7.3
-#    hostname: dify_api
-##    restart: always
-#    environment:
-#      # Startup mode, 'api' starts the API server.
-#      MODE: api
-#    depends_on:
-#      - mypostgres
-#      - myredisstack
-#    volumes:
-#      # Mount the storage directory to the container, for storing user files.
-#      - /mnt/data/vergil/dify/storage:/app/api/storage
-#    extra_hosts:
-#      - host.docker.internal:host-gateway
-#    env_file:
-#      - dify/dify.env
-#
-#  dify-worker:
-#    image: langgenius/dify-api:0.7.3
-#    hostname: dify_worker
-##    restart: always
-#    environment:
-#      # Startup mode, 'worker' starts the Celery worker for processing the queue.
-#      MODE: worker
-#    depends_on:
-#      - mypostgres
-#      - myredisstack
-#    volumes:
-#      # Mount the storage directory to the container, for storing user files.
-#      - /mnt/data/vergil/dify/storage:/app/api/storage
-#    extra_hosts:
-#      - host.docker.internal:host-gateway
-#    env_file:
-#      - dify/dify.env
-#
-#  dify-web:
-#    image: langgenius/dify-web:0.7.3
-#    hostname: dify-web
-#    extra_hosts:
-#      - host.docker.internal:host-gateway
-##    restart: always
-#    env_file:
-#      - dify/dify.env
-#
-#  # The nginx reverse proxy.
-#  # used for reverse proxying the API service and Web service.
-#  nginx:
-#    image: nginx:latest
+# 下面是dify
+  dify-api:
+    image: langgenius/dify-api:0.11.2
+    hostname: dify_api
 #    restart: always
-#    volumes:
-#      - /mnt/data/vergil/dify/nginx/nginx.conf:/etc/nginx/nginx.conf
-#      - /mnt/data/vergil/dify/nginx/proxy.conf:/etc/nginx/proxy.conf
-#      - /mnt/data/vergil/dify/nginx/conf.d:/etc/nginx/conf.d
-#    depends_on:
-#      - dify-api
-#      - dify-web
-#    ports:
-#      - "30080:80"
+    environment:
+      # Startup mode, 'api' starts the API server.
+      MODE: api
+    depends_on:
+      - mypostgres
+      - myredisstack
+    volumes:
+      # Mount the storage directory to the container, for storing user files.
+      - /mnt/data/vergil/dify/storage:/app/api/storage
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    env_file:
+      - dify/dify.env
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  dify-worker:
+    image: langgenius/dify-api:0.11.2
+    hostname: dify_worker
+#    restart: always
+    environment:
+      # Startup mode, 'worker' starts the Celery worker for processing the queue.
+      MODE: worker
+    depends_on:
+      - mypostgres
+      - myredisstack
+    volumes:
+      # Mount the storage directory to the container, for storing user files.
+      - /mnt/data/vergil/dify/storage:/app/api/storage
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    env_file:
+      - dify/dify.env
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  dify-web:
+    image: langgenius/dify-web:0.11.2
+    hostname: dify-web
+    extra_hosts:
+      - host.docker.internal:host-gateway
+#    restart: always
+    env_file:
+      - dify/dify.env
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # The nginx reverse proxy.
+  # used for reverse proxying the API service and Web service.
+  nginx:
+    image: nginx:latest
+    restart: always
+    volumes:
+      - /mnt/data/vergil/dify/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - /mnt/data/vergil/dify/nginx/proxy.conf:/etc/nginx/proxy.conf
+      - /mnt/data/vergil/dify/nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - dify-api
+      - dify-web
+    ports:
+      - "30080:80"
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"

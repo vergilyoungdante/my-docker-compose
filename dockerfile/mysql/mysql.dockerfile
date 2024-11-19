@@ -1,4 +1,4 @@
-FROM mysql:9.0.1
+FROM mysql:9.1.0
 ADD nacos.sql /docker-entrypoint-initdb.d/nacos-mysql.sql
 RUN chown -R mysql:mysql /docker-entrypoint-initdb.d/nacos-mysql.sql
 EXPOSE 3306

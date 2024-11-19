@@ -1,4 +1,4 @@
-FROM milvusdb/milvus:v2.4.10
+FROM milvusdb/milvus:v2.4.15
 MAINTAINER vergil-young
 
 COPY milvus.yaml /milvus/configs/milvus.yaml
