@@ -46,7 +46,7 @@ services:
         max-file: "3"
 
   mypostgres:
-    image: postgres:17.0
+    image: postgres:17.1
     container_name: vergil-postgres
     hostname: vergil-postgres
     user: root
@@ -77,7 +77,7 @@ services:
         max-file: "3"
 
   myrabbitmq:
-    image: rabbitmq:4.0.2-management-alpine
+    image: rabbitmq:4.1-rc-management
     container_name: vergil-rabbitmq
     ports:
       - 25672:5672
@@ -184,7 +184,7 @@ services:
         max-file: "3"
 
   mynacos:
-    image: nacos/nacos-server:v2.4.2.1
+    image: nacos/nacos-server:v2.4.3
     container_name: mynacos
     ports:
       - 28848:8848
@@ -199,8 +199,8 @@ services:
       - MODE=standalone
       - SPRING_DATASOURCE_PLATFORM=mysql
       # 必须给nacos配置公网IP，要不然注册的服务也拿不到公网IP
-      - NACOS_SERVER_IP=223.72.5.68
-      - MYSQL_SERVICE_HOST=223.72.5.68
+      - NACOS_SERVER_IP=223.72.5.112
+      - MYSQL_SERVICE_HOST=223.72.5.112
       - MYSQL_SERVICE_DB_NAME=nacos_dev
       - MYSQL_SERVICE_PORT=23306
       - MYSQL_SERVICE_USER=nacosvergil
@@ -243,50 +243,58 @@ services:
 #      - TZ=Asia/Shanghai
 
 # 不用milvus了，停用etcd
-#  etcd:
-#    container_name: milvus-etcd
-#    image: quay.io/coreos/etcd:v3.5.5
-#    hostname: milvus-etcd
-#    environment:
-#      - ETCD_AUTO_COMPACTION_MODE=revision
-#      - ETCD_AUTO_COMPACTION_RETENTION=1000
-#      - ETCD_QUOTA_BACKEND_BYTES=4294967296
-#      - ETCD_SNAPSHOT_COUNT=50000
-#    volumes:
-#      - /mnt/data/vergil/etcd:/etcd
-#    command: etcd -advertise-client-urls=http://127.0.0.1:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir /etcd
-#    healthcheck:
-#      test: [ "CMD", "etcdctl", "endpoint", "health" ]
-#      interval: 30s
-#      timeout: 20s
-#      retries: 3
+  etcd:
+    container_name: milvus-etcd
+    image: quay.io/coreos/etcd:v3.5.14
+    hostname: milvus-etcd
+    environment:
+      - ETCD_AUTO_COMPACTION_MODE=revision
+      - ETCD_AUTO_COMPACTION_RETENTION=1000
+      - ETCD_QUOTA_BACKEND_BYTES=4294967296
+      - ETCD_SNAPSHOT_COUNT=50000
+    volumes:
+      - /mnt/data/vergil/etcd:/etcd
+    command: etcd -advertise-client-urls=http://127.0.0.1:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir /etcd
+    healthcheck:
+      test: [ "CMD", "etcdctl", "endpoint", "health" ]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 #不用dify了,停掉milvus
-#  milvus:
-#    build:
-#      context: milvus/
-#      dockerfile: milvus.dockerfile
-##    image: milvusdb/milvus:v2.4.10
-#    container_name: milvus-standalone
-#    hostname: milvus-standalone
-#    command: ["milvus", "run", "standalone"]
-#    environment:
-#      ETCD_ENDPOINTS: etcd:2379
-#      MINIO_ADDRESS: minio:9000
-#    volumes:
-#      - /mnt/data/vergil/milvus:/var/lib/milvus
-#    ports:
-#      - "39530:19530"
-#      - "39091:9091"
-#    healthcheck:
-#      test: [ "CMD", "curl", "-f", "http://localhost:9091/healthz" ]
-#      interval: 30s
-#      start_period: 90s
-#      timeout: 20s
-#      retries: 3
-#    depends_on:
-#      - "minio"
-#      - "etcd"
+  milvus:
+    build:
+      context: milvus/
+      dockerfile: milvus.dockerfile
+#    image: milvusdb/milvus:v2.4.10
+    container_name: milvus-standalone
+    hostname: milvus-standalone
+    command: ["milvus", "run", "standalone"]
+    environment:
+      ETCD_ENDPOINTS: etcd:2379
+      MINIO_ADDRESS: minio:9000
+    volumes:
+      - /mnt/data/vergil/milvus:/var/lib/milvus
+    ports:
+      - "39530:19530"
+      - "39091:9091"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9091/healthz" ]
+      interval: 30s
+      start_period: 90s
+      timeout: 20s
+      retries: 3
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+    depends_on:
+      - "minio"
+      - "etcd"
 
 #  attu:
 #    container_name: attu
@@ -419,7 +427,7 @@ services:
 #      - monitor
 
   ollama:
-    image: ollama/ollama:0.3.8-rocm
+    image: ollama/ollama:0.4.2
     container_name: ollama
     hostname: ollama
     restart: unless-stopped
@@ -494,39 +502,39 @@ services:
 #        max-file: "1"
 
 #  这个太占内存了，权限管理不行，不太实用
-  windows:
-    image: dockurr/windows
-    container_name: windows
-    environment:
-      VERSION: "win11"
-      DISK_SIZE: "256G"
-      RAM_SIZE: "16G"
-      CPU_CORES: "6"
-      USERNAME: "vergil"
-      PASSWORD: "921115"
-    devices:
-      - /dev/kvm
-    cap_add:
-      - NET_ADMIN
-    volumes:
-      - /mnt/data/windows:/storage
-      - /mnt/data/shared:/shared
-    ports:
-      - 28006:8006
-      - 23389:3389/tcp
-      - 23389:3389/udp
-    stop_grace_period: 2m
-    logging:
-      options:
-        max-size: "10m"
-        max-file: "3"
+#  windows:
+#    image: dockurr/windows
+#    container_name: windows
+#    environment:
+#      VERSION: "win11"
+#      DISK_SIZE: "256G"
+#      RAM_SIZE: "16G"
+#      CPU_CORES: "6"
+#      USERNAME: "vergil"
+#      PASSWORD: "921115"
+#    devices:
+#      - /dev/kvm
+#    cap_add:
+#      - NET_ADMIN
+#    volumes:
+#      - /mnt/data/windows:/storage
+#      - /mnt/data/shared:/shared
+#    ports:
+#      - 28006:8006
+#      - 23389:3389/tcp
+#      - 23389:3389/udp
+#    stop_grace_period: 2m
+#    logging:
+#      options:
+#        max-size: "10m"
+#        max-file: "3"
 
   mygitlab:
-    image: gitlab/gitlab-ce:17.5.0-ce.0
+    image: gitlab/gitlab-ce:17.5.2-ce.0
     container_name: gitlab
     user: root
 #    restart: always
-    hostname: 223.72.5.68
+    hostname: 223.72.5.112
     ports:
       - '20080:80'
       - '20443:443'
@@ -534,7 +542,7 @@ services:
     environment:
         TZ: 'Asia/Shanghai'
         GITLAB_OMNIBUS_CONFIG: |
-          registry_external_url 'http://223.72.5.68:20080'
+          registry_external_url 'http://223.72.5.112:20080'
           gitlab_rails['time_zone'] = 'Asia/Shanghai'
           gitlab_rails['initial_root_password'] = 'xyfs2023'
           postgresql['enable'] = false 
@@ -583,68 +591,87 @@ services:
       - /mnt/data/vergil/gitlab:/etc/gitlab
       - /mnt/data/vergil/gitlab:/var/log/gitlab
       - /mnt/data/vergil/gitlab:/var/opt/gitlab
+    depends_on:
+      - mypostgres
+      - myredisstack
     logging:
       options:
         max-size: "10m"
         max-file: "3"
 
-## 下面是dify
-#  dify-api:
-#    image: langgenius/dify-api:0.7.3
-#    hostname: dify_api
-##    restart: always
-#    environment:
-#      # Startup mode, 'api' starts the API server.
-#      MODE: api
-#    depends_on:
-#      - mypostgres
-#      - myredisstack
-#    volumes:
-#      # Mount the storage directory to the container, for storing user files.
-#      - /mnt/data/vergil/dify/storage:/app/api/storage
-#    extra_hosts:
-#      - host.docker.internal:host-gateway
-#    env_file:
-#      - dify/dify.env
-#
-#  dify-worker:
-#    image: langgenius/dify-api:0.7.3
-#    hostname: dify_worker
-##    restart: always
-#    environment:
-#      # Startup mode, 'worker' starts the Celery worker for processing the queue.
-#      MODE: worker
-#    depends_on:
-#      - mypostgres
-#      - myredisstack
-#    volumes:
-#      # Mount the storage directory to the container, for storing user files.
-#      - /mnt/data/vergil/dify/storage:/app/api/storage
-#    extra_hosts:
-#      - host.docker.internal:host-gateway
-#    env_file:
-#      - dify/dify.env
-#
-#  dify-web:
-#    image: langgenius/dify-web:0.7.3
-#    hostname: dify-web
-#    extra_hosts:
-#      - host.docker.internal:host-gateway
-##    restart: always
-#    env_file:
-#      - dify/dify.env
-#
-#  # The nginx reverse proxy.
-#  # used for reverse proxying the API service and Web service.
-#  nginx:
-#    image: nginx:latest
+# 下面是dify
+  dify-api:
+    image: langgenius/dify-api:0.11.2
+    hostname: dify_api
 #    restart: always
-#    volumes:
-#      - /mnt/data/vergil/dify/nginx/nginx.conf:/etc/nginx/nginx.conf
-#      - /mnt/data/vergil/dify/nginx/proxy.conf:/etc/nginx/proxy.conf
-#      - /mnt/data/vergil/dify/nginx/conf.d:/etc/nginx/conf.d
-#    depends_on:
-#      - dify-api
-#      - dify-web
-#    ports:
-#      - "30080:80"
+    environment:
+      # Startup mode, 'api' starts the API server.
+      MODE: api
+    depends_on:
+      - mypostgres
+      - myredisstack
+    volumes:
+      # Mount the storage directory to the container, for storing user files.
+      - /mnt/data/vergil/dify/storage:/app/api/storage
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    env_file:
+      - dify/dify.env
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  dify-worker:
+    image: langgenius/dify-api:0.11.2
+    hostname: dify_worker
+#    restart: always
+    environment:
+      # Startup mode, 'worker' starts the Celery worker for processing the queue.
+      MODE: worker
+    depends_on:
+      - mypostgres
+      - myredisstack
+    volumes:
+      # Mount the storage directory to the container, for storing user files.
+      - /mnt/data/vergil/dify/storage:/app/api/storage
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    env_file:
+      - dify/dify.env
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  dify-web:
+    image: langgenius/dify-web:0.11.2
+    hostname: dify-web
+    extra_hosts:
+      - host.docker.internal:host-gateway
+#    restart: always
+    env_file:
+      - dify/dify.env
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # The nginx reverse proxy.
+  # used for reverse proxying the API service and Web service.
+  nginx:
+    image: nginx:latest
+    restart: always
+    volumes:
+      - /mnt/data/vergil/dify/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - /mnt/data/vergil/dify/nginx/proxy.conf:/etc/nginx/proxy.conf
+      - /mnt/data/vergil/dify/nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - dify-api
+      - dify-web
+    ports:
+      - "30080:80"
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
