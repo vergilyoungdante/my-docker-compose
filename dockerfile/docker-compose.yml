@@ -446,32 +446,32 @@ services:
         max-size: "10m"
         max-file: "3"
 
-#  open-webui:
-#    image: ghcr.io/open-webui/open-webui:main
-#    container_name: open-webui
-#    hostname: open-webui
-#    restart: unless-stopped
-#    volumes:
-#      - /mnt/data/vergil/openwebui:/app/backend/data
-#    ports:
-#      - 28081:8081
-#    environment:
-#      - OLLAMA_BASE_URL=http://ollama:11434
-#      - WEBUI_SECRET_KEY=TKCS@Pass1234!
-#      - HF_ENDPOINT=https://hf-mirror.com
-#      - PORT=8081
-#      - DATABASE_URL=postgresql://ollama:ollama@vergil-postgres:5432/webui
-#      - JWT_EXPIRES_IN=3600
-#      - ENABLE_COMMUNITY_SHARING=False
-#      - WEBUI_URL=http://searxng:8080
-#    extra_hosts:
-#      - host.docker.internal:host-gateway
-#    depends_on:
-#      - ollama
-#    logging:
-#      options:
-#        max-size: "10m"
-#        max-file: "3"
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui
+    hostname: open-webui
+    restart: unless-stopped
+    volumes:
+      - /mnt/data/vergil/openwebui:/app/backend/data
+    ports:
+      - 28081:8081
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - WEBUI_SECRET_KEY=TKCS@Pass1234!
+      - HF_ENDPOINT=https://hf-mirror.com
+      - PORT=8081
+      - DATABASE_URL=postgresql://ollama:ollama@vergil-postgres:5432/webui
+      - JWT_EXPIRES_IN=3600
+      - ENABLE_COMMUNITY_SHARING=False
+      - WEBUI_URL=http://searxng:8080
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    depends_on:
+      - ollama
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   # 给大模型用的私有搜索引擎,部署失败
 #  searxng:
