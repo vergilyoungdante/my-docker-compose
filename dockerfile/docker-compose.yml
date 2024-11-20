@@ -375,7 +375,7 @@ services:
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
-      - '--storage.tsdb.retention=7d'
+      - '--storage.tsdb.retention.time=7d'
       - '--web.console.libraries=/etc/prometheus/console_libraries'
       - '--web.console.templates=/etc/prometheus/consoles'
       - '--web.enable-lifecycle'
@@ -602,7 +602,7 @@ services:
 # 下面是dify
   dify-api:
     image: langgenius/dify-api:0.11.2
-    hostname: dify_api
+    hostname: api
 #    restart: always
     environment:
       # Startup mode, 'api' starts the API server.
@@ -624,7 +624,7 @@ services:
 
   dify-worker:
     image: langgenius/dify-api:0.11.2
-    hostname: dify_worker
+    hostname: worker
 #    restart: always
     environment:
       # Startup mode, 'worker' starts the Celery worker for processing the queue.
@@ -646,7 +646,7 @@ services:
 
   dify-web:
     image: langgenius/dify-web:0.11.2
-    hostname: dify-web
+    hostname: web
     extra_hosts:
       - host.docker.internal:host-gateway
 #    restart: always
@@ -659,20 +659,36 @@ services:
 
   # The nginx reverse proxy.
   # used for reverse proxying the API service and Web service.
-#  nginx:
-#    image: nginx:latest
-#    restart: always
-#    volumes:
-#      - ./mnt/data/vergil/dify/nginx/nginx.conf.template:/etc/nginx/nginx.conf.template
-#      - ./mnt/data/vergil/dify/nginx/proxy.conf.template:/etc/nginx/proxy.conf.template
-#      - ./mnt/data/vergil/dify/nginx/conf.d:/etc/nginx/conf.d
-#      - ./mnt/data/vergil/dify/nginx/docker-entrypoint.sh:/docker-entrypoint-mount.sh
-#    depends_on:
-#      - dify-api
-#      - dify-web
-#    ports:
-#      - "30080:80"
-#    logging:
-#      options:
-#        max-size: "10m"
-#        max-file: "3"
+  nginx:
+    image: nginx:latest
+    restart: always
+    volumes:
+      - /mnt/data/vergil/dify/nginx/nginx.conf.template:/etc/nginx/nginx.conf.template
+      - /mnt/data/vergil/dify/nginx/proxy.conf.template:/etc/nginx/proxy.conf.template
+      - /mnt/data/vergil/dify/nginx/conf.d:/etc/nginx/conf.d
+      - /mnt/data/vergil/dify/nginx/docker-entrypoint.sh:/docker-entrypoint-mount.sh
+    entrypoint:
+      [
+        'sh',
+        '-c',
+        "cp /docker-entrypoint-mount.sh /docker-entrypoint.sh && sed -i 's/\r$$//' /docker-entrypoint.sh && chmod +x /docker-entrypoint.sh && /docker-entrypoint.sh",
+      ]
+    environment:
+      NGINX_SERVER_NAME: ${NGINX_SERVER_NAME:-_}
+      NGINX_HTTPS_ENABLED: ${NGINX_HTTPS_ENABLED:-false}
+      NGINX_SSL_PORT: ${NGINX_SSL_PORT:-443}
+      NGINX_PORT: ${NGINX_PORT:-80}
+      NGINX_WORKER_PROCESSES: ${NGINX_WORKER_PROCESSES:-4}
+      NGINX_KEEPALIVE_TIMEOUT: ${NGINX_KEEPALIVE_TIMEOUT:-65}
+      NGINX_PROXY_READ_TIMEOUT: ${NGINX_PROXY_READ_TIMEOUT:-3600s}
+      NGINX_PROXY_SEND_TIMEOUT: ${NGINX_PROXY_SEND_TIMEOUT:-3600s}
+      NGINX_CLIENT_MAX_BODY_SIZE: ${NGINX_CLIENT_MAX_BODY_SIZE:-300M}
+    depends_on:
+      - dify-api
+      - dify-web
+    ports:
+      - "30080:80"
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
