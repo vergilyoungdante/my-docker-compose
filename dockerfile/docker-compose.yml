@@ -473,6 +473,28 @@ services:
         max-size: "10m"
         max-file: "3"
 
+  anything-llm:
+    image: mintplexlabs/anythingllm
+    container_name: anythingllm
+    cap_add:
+      - SYS_ADMIN
+    volumes:
+      - "/mnt/data/vergil/anythingllm/server/storage:/app/server/storage"
+    user: root
+    restart: unless-stopped
+    ports:
+      - "23001:3001"
+    env_file:
+      - anythingllm/anythingllm.env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - ollama
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+
   # 给大模型用的私有搜索引擎,部署失败
 #  searxng:
 #    build:
