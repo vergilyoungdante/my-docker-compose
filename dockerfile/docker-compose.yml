@@ -714,3 +714,27 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+
+  radicale:
+    image: tomsquest/docker-radicale:3.3.1.0
+    init: true
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - SETUID
+      - SETGID
+      - CHOWN
+      - KILL
+    healthcheck:
+      test: curl -f http://127.0.0.1:5232 || exit 1
+      interval: 30s
+      retries: 3
+    restart: unless-stopped
+    ports:
+      - 25232:5232
+    volumes:
+      - /mnt/data/wangjs35/radicale/data:/data
+      - /mnt/data/wangjs35/radicale/config:/config
