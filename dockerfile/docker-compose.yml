@@ -737,4 +737,4 @@ services:
       - 25232:5232
     volumes:
       - /mnt/data/wangjs35/radicale/data:/data
-      - /mnt/data/wangjs35/radicale/config:/config
+      - /mnt/data/wangjs35/radicale/config:/config:ro
