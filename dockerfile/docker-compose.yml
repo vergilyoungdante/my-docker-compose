@@ -199,8 +199,8 @@ services:
       - MODE=standalone
       - SPRING_DATASOURCE_PLATFORM=mysql
       # 必须给nacos配置公网IP，要不然注册的服务也拿不到公网IP
-      - NACOS_SERVER_IP=223.72.5.225
-      - MYSQL_SERVICE_HOST=223.72.5.225
+      - NACOS_SERVER_IP=223.72.5.106
+      - MYSQL_SERVICE_HOST=223.72.5.106
       - MYSQL_SERVICE_DB_NAME=nacos_dev
       - MYSQL_SERVICE_PORT=23306
       - MYSQL_SERVICE_USER=nacosvergil
@@ -556,7 +556,7 @@ services:
     container_name: gitlab
     user: root
 #    restart: always
-    hostname: 223.72.5.225
+    hostname: 223.72.5.106
     ports:
       - '20080:80'
       - '20443:443'
@@ -564,7 +564,7 @@ services:
     environment:
         TZ: 'Asia/Shanghai'
         GITLAB_OMNIBUS_CONFIG: |
-          registry_external_url 'http://223.72.5.225:20080'
+          registry_external_url 'http://223.72.5.106:20080'
           gitlab_rails['time_zone'] = 'Asia/Shanghai'
           gitlab_rails['initial_root_password'] = 'xyfs2023'
           postgresql['enable'] = false 
