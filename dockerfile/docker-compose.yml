@@ -306,32 +306,32 @@ services:
 #    depends_on:
 #      - "milvus"
 
-#  palu:
-#    container_name: mypalu
-#    image: jammsen/palworld-dedicated-server:latest
-#    restart: unless-stopped
-#    logging:
-#      driver: "local"
-#      options:
-#        max-size: "10m"
-#        max-file: "3"
-#    ports:
-#      - target: 8211 # 容器内游戏端口
-#        published: 28211 # 宿主机映射端口
-#        protocol: udp
-#        mode: host
-#      - target: 8212 # Gameserver API port inside of the container
-#        published: 28212 # Gameserver API port on your host
-#        protocol: tcp
-#        mode: host
-#      - target: 25575 # RCON 容器内
-#        published: 25575 # RCON 宿主机映射端口
-#        protocol: tcp
-#        mode: host
-#    volumes:
-#      - /mnt/data/palu:/palworld # volume自己去指定
-#    env_file:
-#      - palu/palword.env
+  palu:
+    container_name: mypalu
+    image: jammsen/palworld-dedicated-server:latest
+    restart: unless-stopped
+    logging:
+      driver: "local"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    ports:
+      - target: 8211 # 容器内游戏端口
+        published: 28211 # 宿主机映射端口
+        protocol: udp
+        mode: host
+      - target: 8212 # Gameserver API port inside of the container
+        published: 28212 # Gameserver API port on your host
+        protocol: tcp
+        mode: host
+      - target: 25575 # RCON 容器内
+        published: 25575 # RCON 宿主机映射端口
+        protocol: tcp
+        mode: host
+    volumes:
+      - /mnt/data/palu:/palworld # volume自己去指定
+    env_file:
+      - palu/palword.env
 
 #  rcon:
 #    image: outdead/rcon:latest
@@ -714,27 +714,3 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
-
-  radicale:
-    image: tomsquest/docker-radicale:3.3.1.0
-    init: true
-    read_only: true
-    security_opt:
-      - no-new-privileges:true
-    cap_drop:
-      - ALL
-    cap_add:
-      - SETUID
-      - SETGID
-      - CHOWN
-      - KILL
-    healthcheck:
-      test: curl -f http://127.0.0.1:5232 || exit 1
-      interval: 30s
-      retries: 3
-    restart: unless-stopped
-    ports:
-      - 25232:5232
-    volumes:
-      - /mnt/data/wangjs35/radicale/data:/data
-      - /mnt/data/wangjs35/radicale/config:/config:ro
