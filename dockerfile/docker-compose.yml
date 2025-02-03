@@ -46,7 +46,7 @@ services:
         max-file: "3"
 
   mypostgres:
-    image: postgres:17.1
+    image: postgres:17.2
     container_name: vergil-postgres
     hostname: vergil-postgres
     user: root
@@ -184,7 +184,7 @@ services:
         max-file: "3"
 
   mynacos:
-    image: nacos/nacos-server:v2.4.3
+    image: nacos/nacos-server:v2.5.0
     container_name: mynacos
     ports:
       - 28848:8848
@@ -243,58 +243,58 @@ services:
 #      - TZ=Asia/Shanghai
 
 # 不用milvus了，停用etcd
-  etcd:
-    container_name: milvus-etcd
-    image: quay.io/coreos/etcd:v3.5.14
-    hostname: milvus-etcd
-    environment:
-      - ETCD_AUTO_COMPACTION_MODE=revision
-      - ETCD_AUTO_COMPACTION_RETENTION=1000
-      - ETCD_QUOTA_BACKEND_BYTES=4294967296
-      - ETCD_SNAPSHOT_COUNT=50000
-    volumes:
-      - /mnt/data/vergil/etcd:/etcd
-    command: etcd -advertise-client-urls=http://127.0.0.1:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir /etcd
-    healthcheck:
-      test: [ "CMD", "etcdctl", "endpoint", "health" ]
-      interval: 30s
-      timeout: 20s
-      retries: 3
-    logging:
-      options:
-        max-size: "10m"
-        max-file: "3"
+#  etcd:
+#    container_name: milvus-etcd
+#    image: quay.io/coreos/etcd:v3.5.14
+#    hostname: milvus-etcd
+#    environment:
+#      - ETCD_AUTO_COMPACTION_MODE=revision
+#      - ETCD_AUTO_COMPACTION_RETENTION=1000
+#      - ETCD_QUOTA_BACKEND_BYTES=4294967296
+#      - ETCD_SNAPSHOT_COUNT=50000
+#    volumes:
+#      - /mnt/data/vergil/etcd:/etcd
+#    command: etcd -advertise-client-urls=http://127.0.0.1:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir /etcd
+#    healthcheck:
+#      test: [ "CMD", "etcdctl", "endpoint", "health" ]
+#      interval: 30s
+#      timeout: 20s
+#      retries: 3
+#    logging:
+#      options:
+#        max-size: "10m"
+#        max-file: "3"
 
 #不用dify了,停掉milvus
-  milvus:
-    build:
-      context: milvus/
-      dockerfile: milvus.dockerfile
-#    image: milvusdb/milvus:v2.4.10
-    container_name: milvus-standalone
-    hostname: milvus-standalone
-    command: ["milvus", "run", "standalone"]
-    environment:
-      ETCD_ENDPOINTS: etcd:2379
-      MINIO_ADDRESS: minio:9000
-    volumes:
-      - /mnt/data/vergil/milvus:/var/lib/milvus
-    ports:
-      - "39530:19530"
-      - "39091:9091"
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:9091/healthz" ]
-      interval: 30s
-      start_period: 90s
-      timeout: 20s
-      retries: 3
-    logging:
-      options:
-        max-size: "10m"
-        max-file: "3"
-    depends_on:
-      - "minio"
-      - "etcd"
+#  milvus:
+#    build:
+#      context: milvus/
+#      dockerfile: milvus.dockerfile
+##    image: milvusdb/milvus:v2.4.10
+#    container_name: milvus-standalone
+#    hostname: milvus-standalone
+#    command: ["milvus", "run", "standalone"]
+#    environment:
+#      ETCD_ENDPOINTS: etcd:2379
+#      MINIO_ADDRESS: minio:9000
+#    volumes:
+#      - /mnt/data/vergil/milvus:/var/lib/milvus
+#    ports:
+#      - "39530:19530"
+#      - "39091:9091"
+#    healthcheck:
+#      test: [ "CMD", "curl", "-f", "http://localhost:9091/healthz" ]
+#      interval: 30s
+#      start_period: 90s
+#      timeout: 20s
+#      retries: 3
+#    logging:
+#      options:
+#        max-size: "10m"
+#        max-file: "3"
+#    depends_on:
+#      - "minio"
+#      - "etcd"
 
 #  attu:
 #    container_name: attu
@@ -306,32 +306,32 @@ services:
 #    depends_on:
 #      - "milvus"
 
-  palu:
-    container_name: mypalu
-    image: jammsen/palworld-dedicated-server:latest
-    restart: unless-stopped
-    logging:
-      driver: "local"
-      options:
-        max-size: "10m"
-        max-file: "3"
-    ports:
-      - target: 8211 # 容器内游戏端口
-        published: 28211 # 宿主机映射端口
-        protocol: udp
-        mode: host
-      - target: 8212 # Gameserver API port inside of the container
-        published: 28212 # Gameserver API port on your host
-        protocol: tcp
-        mode: host
-      - target: 25575 # RCON 容器内
-        published: 25575 # RCON 宿主机映射端口
-        protocol: tcp
-        mode: host
-    volumes:
-      - /mnt/data/palu:/palworld # volume自己去指定
-    env_file:
-      - palu/palword.env
+#  palu:
+#    container_name: mypalu
+#    image: jammsen/palworld-dedicated-server:latest
+#    restart: unless-stopped
+#    logging:
+#      driver: "local"
+#      options:
+#        max-size: "10m"
+#        max-file: "3"
+#    ports:
+#      - target: 8211 # 容器内游戏端口
+#        published: 28211 # 宿主机映射端口
+#        protocol: udp
+#        mode: host
+#      - target: 8212 # Gameserver API port inside of the container
+#        published: 28212 # Gameserver API port on your host
+#        protocol: tcp
+#        mode: host
+#      - target: 25575 # RCON 容器内
+#        published: 25575 # RCON 宿主机映射端口
+#        protocol: tcp
+#        mode: host
+#    volumes:
+#      - /mnt/data/palu:/palworld # volume自己去指定
+#    env_file:
+#      - palu/palword.env
 
 #  rcon:
 #    image: outdead/rcon:latest
@@ -427,7 +427,7 @@ services:
 #      - monitor
 
   ollama:
-    image: ollama/ollama:0.4.2
+    image: ollama/ollama:0.5.7
     container_name: ollama
     hostname: ollama
     restart: unless-stopped
@@ -473,29 +473,7 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  anything-llm:
-    image: mintplexlabs/anythingllm
-    container_name: anythingllm
-    cap_add:
-      - SYS_ADMIN
-    volumes:
-      - "/mnt/data/vergil/anythingllm/server/storage:/app/server/storage"
-    user: root
-    restart: unless-stopped
-    ports:
-      - "23001:3001"
-    env_file:
-      - anythingllm/anythingllm.env
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    depends_on:
-      - ollama
-    logging:
-      options:
-        max-size: "10m"
-        max-file: "3"
-
-  # 给大模型用的私有搜索引擎,部署失败
+# 给大模型用的私有搜索引擎,部署失败
 #  searxng:
 #    build:
 #      context: searxng
@@ -552,7 +530,7 @@ services:
 #        max-file: "3"
 
   mygitlab:
-    image: gitlab/gitlab-ce:17.5.2-ce.0
+    image: gitlab/gitlab-ce:17.8.1-ce.0
     container_name: gitlab
     user: root
 #    restart: always
@@ -622,95 +600,119 @@ services:
         max-file: "3"
 
 # 下面是dify
-  dify-api:
-    image: langgenius/dify-api:0.11.2
-    hostname: api
-#    restart: always
-    environment:
-      # Startup mode, 'api' starts the API server.
-      MODE: api
-    depends_on:
-      - mypostgres
-      - myredisstack
-    volumes:
-      # Mount the storage directory to the container, for storing user files.
-      - /mnt/data/vergil/dify/storage:/app/api/storage
-    extra_hosts:
-      - host.docker.internal:host-gateway
-    env_file:
-      - dify/dify.env
-    logging:
-      options:
-        max-size: "10m"
-        max-file: "3"
+#  dify-api:
+#    image: langgenius/dify-api:0.11.2
+#    hostname: api
+##    restart: always
+#    environment:
+#      # Startup mode, 'api' starts the API server.
+#      MODE: api
+#    depends_on:
+#      - mypostgres
+#      - myredisstack
+#    volumes:
+#      # Mount the storage directory to the container, for storing user files.
+#      - /mnt/data/vergil/dify/storage:/app/api/storage
+#    extra_hosts:
+#      - host.docker.internal:host-gateway
+#    env_file:
+#      - dify/dify.env
+#    logging:
+#      options:
+#        max-size: "10m"
+#        max-file: "3"
 
-  dify-worker:
-    image: langgenius/dify-api:0.11.2
-    hostname: worker
-#    restart: always
-    environment:
-      # Startup mode, 'worker' starts the Celery worker for processing the queue.
-      MODE: worker
-    depends_on:
-      - mypostgres
-      - myredisstack
-    volumes:
-      # Mount the storage directory to the container, for storing user files.
-      - /mnt/data/vergil/dify/storage:/app/api/storage
-    extra_hosts:
-      - host.docker.internal:host-gateway
-    env_file:
-      - dify/dify.env
-    logging:
-      options:
-        max-size: "10m"
-        max-file: "3"
+#  dify-worker:
+#    image: langgenius/dify-api:0.11.2
+#    hostname: worker
+##    restart: always
+#    environment:
+#      # Startup mode, 'worker' starts the Celery worker for processing the queue.
+#      MODE: worker
+#    depends_on:
+#      - mypostgres
+#      - myredisstack
+#    volumes:
+#      # Mount the storage directory to the container, for storing user files.
+#      - /mnt/data/vergil/dify/storage:/app/api/storage
+#    extra_hosts:
+#      - host.docker.internal:host-gateway
+#    env_file:
+#      - dify/dify.env
+#    logging:
+#      options:
+#        max-size: "10m"
+#        max-file: "3"
 
-  dify-web:
-    image: langgenius/dify-web:0.11.2
-    hostname: web
-    extra_hosts:
-      - host.docker.internal:host-gateway
-#    restart: always
-    env_file:
-      - dify/dify.env
-    logging:
-      options:
-        max-size: "10m"
-        max-file: "3"
+#  dify-web:
+#    image: langgenius/dify-web:0.11.2
+#    hostname: web
+#    extra_hosts:
+#      - host.docker.internal:host-gateway
+##    restart: always
+#    env_file:
+#      - dify/dify.env
+#    logging:
+#      options:
+#        max-size: "10m"
+#        max-file: "3"
 
   # The nginx reverse proxy.
   # used for reverse proxying the API service and Web service.
-  nginx:
-    image: nginx:latest
-    restart: always
-    volumes:
-      - /mnt/data/vergil/dify/nginx/nginx.conf.template:/etc/nginx/nginx.conf.template
-      - /mnt/data/vergil/dify/nginx/proxy.conf.template:/etc/nginx/proxy.conf.template
-      - /mnt/data/vergil/dify/nginx/conf.d:/etc/nginx/conf.d
-      - /mnt/data/vergil/dify/nginx/docker-entrypoint.sh:/docker-entrypoint-mount.sh
-    entrypoint:
-      [
-        'sh',
-        '-c',
-        "cp /docker-entrypoint-mount.sh /docker-entrypoint.sh && sed -i 's/\r$$//' /docker-entrypoint.sh && chmod +x /docker-entrypoint.sh && /docker-entrypoint.sh",
-      ]
-    environment:
-      NGINX_SERVER_NAME: ${NGINX_SERVER_NAME:-_}
-      NGINX_HTTPS_ENABLED: ${NGINX_HTTPS_ENABLED:-false}
-      NGINX_SSL_PORT: ${NGINX_SSL_PORT:-443}
-      NGINX_PORT: ${NGINX_PORT:-80}
-      NGINX_WORKER_PROCESSES: ${NGINX_WORKER_PROCESSES:-4}
-      NGINX_KEEPALIVE_TIMEOUT: ${NGINX_KEEPALIVE_TIMEOUT:-65}
-      NGINX_PROXY_READ_TIMEOUT: ${NGINX_PROXY_READ_TIMEOUT:-3600s}
-      NGINX_PROXY_SEND_TIMEOUT: ${NGINX_PROXY_SEND_TIMEOUT:-3600s}
-      NGINX_CLIENT_MAX_BODY_SIZE: ${NGINX_CLIENT_MAX_BODY_SIZE:-300M}
-    depends_on:
-      - dify-api
-      - dify-web
-    ports:
-      - "30080:80"
-    logging:
-      options:
-        max-size: "10m"
-        max-file: "3"
+#  nginx:
+#    image: nginx:latest
+#    restart: always
+#    volumes:
+#      - /mnt/data/vergil/dify/nginx/nginx.conf.template:/etc/nginx/nginx.conf.template
+#      - /mnt/data/vergil/dify/nginx/proxy.conf.template:/etc/nginx/proxy.conf.template
+#      - /mnt/data/vergil/dify/nginx/conf.d:/etc/nginx/conf.d
+#      - /mnt/data/vergil/dify/nginx/docker-entrypoint.sh:/docker-entrypoint-mount.sh
+#    entrypoint:
+#      [
+#        'sh',
+#        '-c',
+#        "cp /docker-entrypoint-mount.sh /docker-entrypoint.sh && sed -i 's/\r$$//' /docker-entrypoint.sh && chmod +x /docker-entrypoint.sh && /docker-entrypoint.sh",
+#      ]
+#    environment:
+#      NGINX_SERVER_NAME: ${NGINX_SERVER_NAME:-_}
+#      NGINX_HTTPS_ENABLED: ${NGINX_HTTPS_ENABLED:-false}
+#      NGINX_SSL_PORT: ${NGINX_SSL_PORT:-443}
+#      NGINX_PORT: ${NGINX_PORT:-80}
+#      NGINX_WORKER_PROCESSES: ${NGINX_WORKER_PROCESSES:-4}
+#      NGINX_KEEPALIVE_TIMEOUT: ${NGINX_KEEPALIVE_TIMEOUT:-65}
+#      NGINX_PROXY_READ_TIMEOUT: ${NGINX_PROXY_READ_TIMEOUT:-3600s}
+#      NGINX_PROXY_SEND_TIMEOUT: ${NGINX_PROXY_SEND_TIMEOUT:-3600s}
+#      NGINX_CLIENT_MAX_BODY_SIZE: ${NGINX_CLIENT_MAX_BODY_SIZE:-300M}
+#    depends_on:
+#      - dify-api
+#      - dify-web
+#    ports:
+#      - "30080:80"
+#    logging:
+#      options:
+#        max-size: "10m"
+#        max-file: "3"
+
+#  radicale:
+#    image: tomsquest/docker-radicale:3.3.1.0
+#    init: true
+#    read_only: true
+#    security_opt:
+#      - no-new-privileges:true
+#    cap_drop:
+#      - ALL
+#    cap_add:
+#      - SETUID
+#      - SETGID
+#      - CHOWN
+#      - KILL
+#    healthcheck:
+#      test: curl -f http://127.0.0.1:5232 || exit 1
+#      interval: 30s
+#      retries: 3
+#    restart: unless-stopped
+#    ports:
+#      - 25232:5232
+#    volumes:
+#      - /mnt/data/wangjs35/radicale/data:/data
+#      - /mnt/data/wangjs35/radicale/config:/config:ro
