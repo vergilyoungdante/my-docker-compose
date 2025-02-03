@@ -457,11 +457,13 @@ services:
       - 28081:8081
     environment:
       - OLLAMA_BASE_URL=http://ollama:11434
-      - WEBUI_SECRET_KEY=TKCS@Pass1234!
+      - ADMIN_EMAIL=yjb387759719@outlook.com
+      - ENABLE_REALTIME_CHAT_SAVE=True
       - HF_ENDPOINT=https://hf-mirror.com
       - PORT=8081
       - DATABASE_URL=postgresql://ollama:ollama@vergil-postgres:5432/webui
-      - JWT_EXPIRES_IN=3600
+      - DATABASE_POOL_SIZE=16
+      - JWT_EXPIRES_IN=30d
       - ENABLE_COMMUNITY_SHARING=False
       - WEBUI_URL=http://searxng:8080
     extra_hosts:
