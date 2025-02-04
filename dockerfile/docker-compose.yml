@@ -718,3 +718,25 @@ services:
 #    volumes:
 #      - /mnt/data/wangjs35/radicale/data:/data
 #      - /mnt/data/wangjs35/radicale/config:/config:ro
+
+  mcsweb:
+    image: githubyumao/mcsmanager-web:latest
+    ports:
+      - "23333:23333"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /mnt/data/vergil/mcsmanage/web/data:/opt/mcsmanager/web/data
+      - /mnt/data/vergil/mcsmanage/web/logs:/opt/mcsmanager/web/logs
+
+  mcsdaemon:
+    image: githubyumao/mcsmanager-daemon:latest
+    restart: unless-stopped
+    ports:
+      - "24444:24444"
+    environment:
+      - MCSM_DOCKER_WORKSPACE_PATH=/mnt/data/vergil/mcsmanage/daemon/data/InstanceData
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /mnt/data/vergil/mcsmanage/daemon/data:/opt/mcsmanager/daemon/data
+      - /mnt/data/vergil/mcsmanage/daemon/logs:/opt/mcsmanager/daemon/logs
+      - /var/run/docker.sock:/var/run/docker.sock
