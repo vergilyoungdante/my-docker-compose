@@ -156,7 +156,7 @@ services:
 #    driver: bridge
 
   minio:
-    image: quay.io/minio/minio:latest
+    image: minio/minio:RELEASE.2025-02-03T21-03-04Z
     privileged: true
     container_name: myminio
     ports:
@@ -166,6 +166,7 @@ services:
     environment:
       - MINIO_ROOT_USER=vergil
       - MINIO_ROOT_PASSWORD=xyfs2023
+      - MINIO_ETCD_ENDPOINTS=etcd:2379
     volumes:
       - /mnt/data/vergil/minio:/data
 #    deploy:
@@ -271,7 +272,7 @@ services:
     build:
       context: milvus/
       dockerfile: milvus.dockerfile
-#    image: milvusdb/milvus:v2.4.10
+#    image: milvusdb/milvus:v2.5.4
     container_name: milvus-standalone
     hostname: milvus-standalone
     command: ["milvus", "run", "standalone"]
@@ -297,15 +298,15 @@ services:
       - "minio"
       - "etcd"
 
-#  attu:
-#    container_name: attu
-#    image: zilliz/attu:v2.2.3
-#    environment:
-#      MILVUS_URL: milvus-standalone:19530
-#    ports:
-#      - "3000:3000"
-#    depends_on:
-#      - "milvus"
+  attu:
+    container_name: attu
+    image: zilliz/attu:v2.5.2
+    environment:
+      MILVUS_URL: milvus-standalone:19530
+    ports:
+      - "33000:3000"
+    depends_on:
+      - "milvus"
 
 #  palu:
 #    container_name: mypalu

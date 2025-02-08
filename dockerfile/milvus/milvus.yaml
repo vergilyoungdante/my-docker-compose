@@ -151,7 +151,7 @@ minio:
   # Leave it empty if you want to use AWS default endpoint
   iamEndpoint:
   logLevel: fatal # Log level for aws sdk log. Supported level:  off, fatal, error, warn, info, debug, trace
-  region:  # Specify minio storage system location region
+  region: cn-northwest-1 # Specify minio storage system location region
   useVirtualHost: false # Whether use virtual host mode for bucket
   requestTimeoutMs: 10000 # minio timeout for request time in milliseconds
   # The maximum number of objects requested per batch in minio ListObjects rpc,
@@ -569,9 +569,10 @@ dataCoord:
     taskPrioritizer: default
     taskQueueCapacity: 100000 # compaction task queue size
     rpcTimeout: 10
-    maxParallelTaskNum: 10
+    maxParallelTaskNum: -1 # Deprecated, see datanode.slot.slotCap
     dropTolerance: 86400 # Compaction task will be cleaned after finish longer than this time(in seconds)
     gcInterval: 1800 # The time interval in seconds for compaction gc
+    scheduleInterval: 500 # The time interval in milliseconds for scheduling compaction tasks. If the configuration setting is below 100ms, it will be ajusted upwards to 100ms
     mix:
       triggerInterval: 60 # The time interval in seconds to trigger mix compaction
     levelzero:
@@ -766,7 +767,7 @@ log:
     maxSize: 300 # The maximum size of a log file, unit: MB.
     maxAge: 10 # The maximum retention time before a log file is automatically cleared, unit: day. The minimum value is 1.
     maxBackups: 20 # The maximum number of log files to back up, unit: day. The minimum value is 1.
-  format: json # Milvus log format. Option: text and JSON
+  format: text # Milvus log format. Option: text and JSON
   stdout: true # Stdout enable or not
 
 grpc:
@@ -1104,6 +1105,7 @@ trace:
 gpu:
   initMemSize: 2048 # Gpu Memory Pool init size
   maxMemSize: 4096 # Gpu Memory Pool Max size
+  overloadedMemoryThresholdPercentage: 95
 
 # Any configuration related to the streaming node server.
 streamingNode:
