@@ -743,3 +743,11 @@ services:
       - /mnt/data/vergil/mcsmanage/daemon/data:/opt/mcsmanager/daemon/data
       - /mnt/data/vergil/mcsmanage/daemon/logs:/opt/mcsmanager/daemon/logs
       - /var/run/docker.sock:/var/run/docker.sock
+
+  rimworld:
+    image: dalcop/rimworld-together:25.1.2.1
+    restart: unless-stopped
+    ports:
+      - 25555:25555
+    volumes:
+      - /mnt/data/wangyb80/rimworld:/Data
