@@ -128,57 +128,57 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  elasticsearch:
-    image: elasticsearch:8.17.1
-    container_name: elasticsearch
-    privileged: true
-    ports:
-      - 29200:9200
-      - 29300:9300
-    environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=true
-      - xpack.license.self_generated.type=basic
-      - xpack.security.http.ssl.enabled=false
-      - xpack.security.transport.ssl.enabled=false
-      - xpack.security.audit.enabled=true
-      - ingest.geoip.downloader.enabled=false
-      - KIBANA_PASSWORD=xyfs2025
-      - ELASTIC_PASSWORD=xyfs2025
-    volumes:
-      - /mnt/data/vergil/es/plugins:/usr/share/elasticsearch/plugins #插件文件挂载
-      - /mnt/data/vergil/es/data:/usr/share/elasticsearch/data #数据文件挂载
-      - /mnt/data/vergil/es/config:/usr/share/elasticsearch/config #配置文件挂载
-      - /etc/localtime:/etc/localtime:ro #时间同步
-    networks:
-      - elastic
-    logging:
-      options:
-        max-size: "10m"
-        max-file: "3"
-  kibana:
-    depends_on:
-      - elasticsearch
-    image: kibana:8.17.1
-    container_name: kibana
-    privileged: true
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-      - I18N_LOCALE="zh-CN"
-      - KIBANA_SYSTEM_PASSWORD=xyfs2025
-      - ELASTICSEARCH_PASSWORD=xyfs2025
-      - ELASTICSEARCH_USERNAME=kibana_system
-    networks:
-      - elastic
-    ports:
-      - 25601:5601
-    logging:
-      options:
-        max-size: "10m"
-        max-file: "3"
+#  elasticsearch:
+#    image: elasticsearch:8.17.1
+#    container_name: elasticsearch
+#    privileged: true
+#    ports:
+#      - 29200:9200
+#      - 29300:9300
+#    environment:
+#      - discovery.type=single-node
+#      - xpack.security.enabled=true
+#      - xpack.license.self_generated.type=basic
+#      - xpack.security.http.ssl.enabled=false
+#      - xpack.security.transport.ssl.enabled=false
+#      - xpack.security.audit.enabled=true
+#      - ingest.geoip.downloader.enabled=false
+#      - KIBANA_PASSWORD=xyfs2025
+#      - ELASTIC_PASSWORD=xyfs2025
+#    volumes:
+#      - /mnt/data/vergil/es/plugins:/usr/share/elasticsearch/plugins #插件文件挂载
+#      - /mnt/data/vergil/es/data:/usr/share/elasticsearch/data #数据文件挂载
+#      - /mnt/data/vergil/es/config:/usr/share/elasticsearch/config #配置文件挂载
+#      - /etc/localtime:/etc/localtime:ro #时间同步
+#    networks:
+#      - elastic
+#    logging:
+#      options:
+#        max-size: "10m"
+#        max-file: "3"
+#  kibana:
+#    depends_on:
+#      - elasticsearch
+#    image: kibana:8.17.1
+#    container_name: kibana
+#    privileged: true
+#    environment:
+#      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+#      - I18N_LOCALE="zh-CN"
+#      - KIBANA_SYSTEM_PASSWORD=xyfs2025
+#      - ELASTICSEARCH_PASSWORD=xyfs2025
+#      - ELASTICSEARCH_USERNAME=kibana_system
+#    networks:
+#      - elastic
+#    ports:
+#      - 25601:5601
+#    logging:
+#      options:
+#        max-size: "10m"
+#        max-file: "3"
 
   minio:
-    image: minio/minio:RELEASE.2025-02-18T16-25-55Z
+    image: minio/minio:RELEASE.2025-03-12T18-04-18Z
     privileged: true
     container_name: myminio
     ports:
@@ -207,7 +207,7 @@ services:
         max-file: "3"
 
   mynacos:
-    image: nacos/nacos-server:v2.5.0
+    image: nacos/nacos-server:v2.5.1
     container_name: mynacos
     ports:
       - 28848:8848
@@ -267,7 +267,7 @@ services:
 
   etcd:
     container_name: etcd
-    image: quay.io/coreos/etcd:v3.5.18
+    image: quay.io/coreos/etcd:v3.5.20
     hostname: etcd
     environment:
       - ETCD_ROOT_PASSWORD=xyfs2025
@@ -322,7 +322,7 @@ services:
 
   attu:
     container_name: attu
-    image: zilliz/attu:v2.5.4
+    image: zilliz/attu:v2.5.6
     environment:
       MILVUS_URL: milvus-standalone:19530
     ports:
@@ -431,7 +431,7 @@ services:
         max-file: "3"
 
   ollama:
-    image: ollama/ollama:0.5.12
+    image: ollama/ollama:0.6.2
     container_name: ollama
     hostname: ollama
     restart: unless-stopped
@@ -451,7 +451,7 @@ services:
         max-file: "3"
 
   open-webui:
-    image: ghcr.io/open-webui/open-webui:0.5.16
+    image: ghcr.io/open-webui/open-webui:0.5.20
     container_name: open-webui
     hostname: open-webui
     restart: unless-stopped
@@ -536,7 +536,7 @@ services:
 #        max-file: "3"
 
   mygitlab:
-    image: gitlab/gitlab-ce:17.8.1-ce.0
+    image: gitlab/gitlab-ce:17.10.0-ce.0
     container_name: gitlab
     user: root
 #    restart: always
@@ -723,27 +723,27 @@ services:
 #      - /mnt/data/wangjs35/radicale/data:/data
 #      - /mnt/data/wangjs35/radicale/config:/config:ro
 
-  mcsweb:
-    image: githubyumao/mcsmanager-web:latest
-    ports:
-      - "23333:23333"
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - /mnt/data/vergil/mcsmanage/web/data:/opt/mcsmanager/web/data
-      - /mnt/data/vergil/mcsmanage/web/logs:/opt/mcsmanager/web/logs
-
-  mcsdaemon:
-    image: githubyumao/mcsmanager-daemon:latest
-    restart: unless-stopped
-    ports:
-      - "24444:24444"
-    environment:
-      - MCSM_DOCKER_WORKSPACE_PATH=/mnt/data/vergil/mcsmanage/daemon/data/InstanceData
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - /mnt/data/vergil/mcsmanage/daemon/data:/opt/mcsmanager/daemon/data
-      - /mnt/data/vergil/mcsmanage/daemon/logs:/opt/mcsmanager/daemon/logs
-      - /var/run/docker.sock:/var/run/docker.sock
+#  mcsweb:
+#    image: githubyumao/mcsmanager-web:latest
+#    ports:
+#      - "23333:23333"
+#    volumes:
+#      - /etc/localtime:/etc/localtime:ro
+#      - /mnt/data/vergil/mcsmanage/web/data:/opt/mcsmanager/web/data
+#      - /mnt/data/vergil/mcsmanage/web/logs:/opt/mcsmanager/web/logs
+#
+#  mcsdaemon:
+#    image: githubyumao/mcsmanager-daemon:latest
+#    restart: unless-stopped
+#    ports:
+#      - "24444:24444"
+#    environment:
+#      - MCSM_DOCKER_WORKSPACE_PATH=/mnt/data/vergil/mcsmanage/daemon/data/InstanceData
+#    volumes:
+#      - /etc/localtime:/etc/localtime:ro
+#      - /mnt/data/vergil/mcsmanage/daemon/data:/opt/mcsmanager/daemon/data
+#      - /mnt/data/vergil/mcsmanage/daemon/logs:/opt/mcsmanager/daemon/logs
+#      - /var/run/docker.sock:/var/run/docker.sock
 
 #  rimworld:
 #    image: dalcop/rimworld-together:25.1.2.1
