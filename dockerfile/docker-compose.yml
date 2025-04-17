@@ -80,7 +80,7 @@ services:
         max-file: "3"
 
   myrabbitmq:
-    image: rabbitmq:4.1-rc-management
+    image: rabbitmq:4.1.0-management
     container_name: vergil-rabbitmq
     ports:
       - 25672:5672
@@ -95,6 +95,7 @@ services:
         max-file: "3"
 
   mymysql:
+    image: mymysql:9.3.0
     build:
       context: mysql/
       dockerfile: mysql.dockerfile
@@ -178,7 +179,7 @@ services:
 #        max-file: "3"
 
   minio:
-    image: minio/minio:RELEASE.2025-03-12T18-04-18Z
+    image: minio/minio:RELEASE.2025-04-08T15-41-24Z
     privileged: true
     container_name: myminio
     ports:
@@ -267,7 +268,7 @@ services:
 
   etcd:
     container_name: etcd
-    image: quay.io/coreos/etcd:v3.5.20
+    image: quay.io/coreos/etcd:v3.5.21
     hostname: etcd
     environment:
       - ETCD_ROOT_PASSWORD=xyfs2025
@@ -291,6 +292,7 @@ services:
         max-file: "3"
 
   milvus:
+    image: mymilvus:v2.5.9
     build:
       context: milvus/
       dockerfile: milvus.dockerfile
@@ -431,7 +433,7 @@ services:
         max-file: "3"
 
   ollama:
-    image: ollama/ollama:0.6.2
+    image: ollama/ollama:0.6.5
     container_name: ollama
     hostname: ollama
     restart: unless-stopped
@@ -451,7 +453,7 @@ services:
         max-file: "3"
 
   open-webui:
-    image: ghcr.io/open-webui/open-webui:0.5.20
+    image: ghcr.io/open-webui/open-webui:0.6.5
     container_name: open-webui
     hostname: open-webui
     restart: unless-stopped
@@ -536,7 +538,7 @@ services:
 #        max-file: "3"
 
   mygitlab:
-    image: gitlab/gitlab-ce:17.10.0-ce.0
+    image: gitlab/gitlab-ce:17.11.0-ce.0
     container_name: gitlab
     user: root
 #    restart: always
@@ -607,7 +609,7 @@ services:
 
 # 下面是dify
 #  dify-api:
-#    image: langgenius/dify-api:0.11.2
+#    image: langgenius/dify-api:1.2.0
 #    hostname: api
 ##    restart: always
 #    environment:
@@ -629,7 +631,7 @@ services:
 #        max-file: "3"
 
 #  dify-worker:
-#    image: langgenius/dify-api:0.11.2
+#    image: langgenius/dify-api:1.2.0
 #    hostname: worker
 ##    restart: always
 #    environment:
@@ -651,7 +653,7 @@ services:
 #        max-file: "3"
 
 #  dify-web:
-#    image: langgenius/dify-web:0.11.2
+#    image: langgenius/dify-web:1.2.0
 #    hostname: web
 #    extra_hosts:
 #      - host.docker.internal:host-gateway
