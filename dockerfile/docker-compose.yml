@@ -451,34 +451,47 @@ services:
         max-size: "10m"
         max-file: "3"
 
-#  open-webui:
-#    image: ghcr.io/open-webui/open-webui:0.6.5
-#    container_name: open-webui
-#    hostname: open-webui
-#    restart: unless-stopped
-#    volumes:
-#      - /mnt/data/vergil/openwebui:/app/backend/data
-#    ports:
-#      - 28081:8081
-#    environment:
-#      - OLLAMA_BASE_URL=http://ollama:11434
-#      - ADMIN_EMAIL=yjb387759719@outlook.com
-#      - ENABLE_REALTIME_CHAT_SAVE=True
-#      - HF_ENDPOINT=https://hf-mirror.com
-#      - PORT=8081
-#      - DATABASE_URL=postgresql://ollama:ollama@vergil-postgres:5432/webui
-#      - DATABASE_POOL_SIZE=16
-#      - JWT_EXPIRES_IN=30d
-#      - ENABLE_COMMUNITY_SHARING=False
-#      - WEBUI_URL=http://searxng:8080
-#    extra_hosts:
-#      - host.docker.internal:host-gateway
-#    depends_on:
-#      - ollama
-#    logging:
-#      options:
-#        max-size: "10m"
-#        max-file: "3"
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:0.6.5
+    container_name: open-webui
+    hostname: open-webui
+    restart: unless-stopped
+    volumes:
+      - /mnt/data/vergil/openwebui:/app/backend/data
+    ports:
+      - 28081:8081
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - ADMIN_EMAIL=yjb387759719@outlook.com
+      - ENABLE_REALTIME_CHAT_SAVE=True
+      - HF_ENDPOINT=https://hf-mirror.com
+      - PORT=8081
+      - DATABASE_URL=postgresql://ollama:ollama@vergil-postgres:5432/webui
+      - DATABASE_POOL_SIZE=16
+      - JWT_EXPIRES_IN=30d
+      - ENABLE_COMMUNITY_SHARING=False
+      - VECTOR_DB=milvus
+      - MILVUS_URI=milvus-standalone:19530
+      - MILVUS_DB=openwebui
+      - MILVUS_TOKEN=root:Milvus
+      - STORAGE_PROVIDER=s3
+      - S3_ACCESS_KEY_ID=InV5AW7gpmyrr8IhCF02
+      - S3_ADDRESSING_STYLE=path
+      - S3_BUCKET_NAME=openwebui
+      - S3_ENDPOINT_URL=minio:9000
+      - S3_KEY_PREFIX=baseService
+      - S3_REGION_NAME=cn-northwest-1
+      - S3_SECRET_ACCESS_KEY=Fzykpr5SZv84ZzVw8s0CE46RbJer2taOCDLzeuzl
+      - REDIS_URL=redis://:xyfs2023@vergil-redis:6379/1
+      -
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    depends_on:
+      - ollama
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 # 给大模型用的私有搜索引擎,部署失败
 #  searxng:
