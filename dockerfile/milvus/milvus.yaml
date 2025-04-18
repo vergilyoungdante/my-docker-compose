@@ -98,20 +98,20 @@ minio:
   # minio.address and minio.port together generate the valid access to MinIO or S3 service.
   # MinIO preferentially acquires the valid IP address from the environment variable MINIO_ADDRESS when Milvus is started.
   # Default value applies when MinIO or S3 is running on the same network with Milvus.
-  address: localhost
+  address: minio
   port: 9000 # Port of MinIO or S3 service.
   # Access key ID that MinIO or S3 issues to user for authorized access.
   # Environment variable: MINIO_ACCESS_KEY_ID or minio.accessKeyID
   # minio.accessKeyID and minio.secretAccessKey together are used for identity authentication to access the MinIO or S3 service.
   # This configuration must be set identical to the environment variable MINIO_ACCESS_KEY_ID, which is necessary for starting MinIO or S3.
   # The default value applies to MinIO or S3 service that started with the default docker-compose.yml file.
-  accessKeyID: vergil
+  accessKeyID: InV5AW7gpmyrr8IhCF02
   # Secret key used to encrypt the signature string and verify the signature string on server. It must be kept strictly confidential and accessible only to the MinIO or S3 server and users.
   # Environment variable: MINIO_SECRET_ACCESS_KEY or minio.secretAccessKey
   # minio.accessKeyID and minio.secretAccessKey together are used for identity authentication to access the MinIO or S3 service.
   # This configuration must be set identical to the environment variable MINIO_SECRET_ACCESS_KEY, which is necessary for starting MinIO or S3.
   # The default value applies to MinIO or S3 service that started with the default docker-compose.yml file.
-  secretAccessKey: xyfs2023
+  secretAccessKey: Fzykpr5SZv84ZzVw8s0CE46RbJer2taOCDLzeuzl
   useSSL: false # Switch value to control if to access the MinIO or S3 service through SSL.
   ssl:
     tlsCACert: /path/to/public.crt # path to your CACert file
@@ -294,7 +294,7 @@ proxy:
   mustUsePartitionKey: false # switch for whether proxy must use partition key for the collection
   accessLog:
     enable: false # Whether to enable the access log feature.
-    minioEnable: false # Whether to upload local access log files to MinIO. This parameter can be specified when proxy.accessLog.filename is not empty.
+    minioEnable: true # Whether to upload local access log files to MinIO. This parameter can be specified when proxy.accessLog.filename is not empty.
     localPath: /tmp/milvus_access # The local folder path where the access log file is stored. This parameter can be specified when proxy.accessLog.filename is not empty.
     filename:  # The name of the access log file. If you leave this parameter empty, access logs will be printed to stdout.
     maxSize: 64 # The maximum size allowed for a single access log file. If the log file size reaches this limit, a rotation process will be triggered. This process seals the current access log file, creates a new log file, and clears the contents of the original log file. Unit: MB.

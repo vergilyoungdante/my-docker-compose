@@ -270,16 +270,16 @@ services:
     image: quay.io/coreos/etcd:v3.5.21
     hostname: etcd
     environment:
-      - ETCD_ROOT_PASSWORD=xyfs2025
       - ETCD_AUTO_COMPACTION_MODE=revision
       - ETCD_AUTO_COMPACTION_RETENTION=1000
       - ETCD_QUOTA_BACKEND_BYTES=4294967296
       - ETCD_SNAPSHOT_COUNT=50000
     volumes:
-      - /mnt/data/vergil/etcd:/etcd
-    command: etcd -advertise-client-urls=http://127.0.0.1:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir /etcd
+      - /mnt/data/vergil/etcd:/etcd-data
+    command: /usr/local/bin/etcd -advertise-client-urls=http://127.0.0.1:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir=/etcd-data
     ports:
       - 22379:2379
+      - 22380:2380
     healthcheck:
       test: [ "CMD", "etcdctl", "endpoint", "health" ]
       interval: 30s
