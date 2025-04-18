@@ -488,6 +488,8 @@ services:
       - host.docker.internal:host-gateway
     depends_on:
       - ollama
+      - myredisstack
+      - mypostgres
     logging:
       options:
         max-size: "10m"
