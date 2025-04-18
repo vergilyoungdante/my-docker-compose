@@ -189,7 +189,6 @@ services:
     environment:
       - MINIO_ROOT_USER=vergil
       - MINIO_ROOT_PASSWORD=xyfs2023
-      - MINIO_ETCD_ENDPOINTS=etcd:2379
     volumes:
       - /mnt/data/vergil/minio:/data
 #    deploy:
@@ -452,34 +451,34 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  open-webui:
-    image: ghcr.io/open-webui/open-webui:0.6.5
-    container_name: open-webui
-    hostname: open-webui
-    restart: unless-stopped
-    volumes:
-      - /mnt/data/vergil/openwebui:/app/backend/data
-    ports:
-      - 28081:8081
-    environment:
-      - OLLAMA_BASE_URL=http://ollama:11434
-      - ADMIN_EMAIL=yjb387759719@outlook.com
-      - ENABLE_REALTIME_CHAT_SAVE=True
-      - HF_ENDPOINT=https://hf-mirror.com
-      - PORT=8081
-      - DATABASE_URL=postgresql://ollama:ollama@vergil-postgres:5432/webui
-      - DATABASE_POOL_SIZE=16
-      - JWT_EXPIRES_IN=30d
-      - ENABLE_COMMUNITY_SHARING=False
-      - WEBUI_URL=http://searxng:8080
-    extra_hosts:
-      - host.docker.internal:host-gateway
-    depends_on:
-      - ollama
-    logging:
-      options:
-        max-size: "10m"
-        max-file: "3"
+#  open-webui:
+#    image: ghcr.io/open-webui/open-webui:0.6.5
+#    container_name: open-webui
+#    hostname: open-webui
+#    restart: unless-stopped
+#    volumes:
+#      - /mnt/data/vergil/openwebui:/app/backend/data
+#    ports:
+#      - 28081:8081
+#    environment:
+#      - OLLAMA_BASE_URL=http://ollama:11434
+#      - ADMIN_EMAIL=yjb387759719@outlook.com
+#      - ENABLE_REALTIME_CHAT_SAVE=True
+#      - HF_ENDPOINT=https://hf-mirror.com
+#      - PORT=8081
+#      - DATABASE_URL=postgresql://ollama:ollama@vergil-postgres:5432/webui
+#      - DATABASE_POOL_SIZE=16
+#      - JWT_EXPIRES_IN=30d
+#      - ENABLE_COMMUNITY_SHARING=False
+#      - WEBUI_URL=http://searxng:8080
+#    extra_hosts:
+#      - host.docker.internal:host-gateway
+#    depends_on:
+#      - ollama
+#    logging:
+#      options:
+#        max-size: "10m"
+#        max-file: "3"
 
 # 给大模型用的私有搜索引擎,部署失败
 #  searxng:
