@@ -470,7 +470,7 @@ services:
       - JWT_EXPIRES_IN=30d
       - ENABLE_COMMUNITY_SHARING=False
       - VECTOR_DB=milvus
-      - MILVUS_URI=http://root:Milvus@milvus-standalone:19530/
+      - MILVUS_URI=http://root:Milvus@milvus-standalone:19530/openwebui
       - MILVUS_DB=openwebui
       - STORAGE_PROVIDER=s3
       - S3_ACCESS_KEY_ID=InV5AW7gpmyrr8IhCF02

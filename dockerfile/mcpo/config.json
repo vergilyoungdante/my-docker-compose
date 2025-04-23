@@ -13,11 +13,12 @@
         "--local-timezone=Asia/Shanghai"
       ]
     },
-    "memory": {
+    "postgres": {
       "command": "npx",
       "args": [
         "-y",
-        "@modalcontextprotocol/server-memory"
+        "@modelcontextprotocol/server-postgres",
+        "postgresql://root:xyfs2023@localhost/meng_mcp"
       ]
     }
   }
