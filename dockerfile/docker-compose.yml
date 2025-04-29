@@ -432,7 +432,7 @@ services:
         max-file: "3"
 
   ollama:
-    image: ollama/ollama:0.6.5
+    image: ollama/ollama:0.6.6
     container_name: ollama
     hostname: ollama
     restart: unless-stopped
