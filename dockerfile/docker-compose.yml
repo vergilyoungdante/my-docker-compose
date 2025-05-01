@@ -635,62 +635,62 @@ services:
         max-file: "3"
 
 # 下面是dify
-#  dify-api:
-#    image: langgenius/dify-api:1.2.0
-#    hostname: api
-##    restart: always
-#    environment:
-#      # Startup mode, 'api' starts the API server.
-#      MODE: api
-#    depends_on:
-#      - mypostgres
-#      - myredisstack
-#    volumes:
-#      # Mount the storage directory to the container, for storing user files.
-#      - /mnt/data/vergil/dify/storage:/app/api/storage
-#    extra_hosts:
-#      - host.docker.internal:host-gateway
-#    env_file:
-#      - dify/dify.env
-#    logging:
-#      options:
-#        max-size: "10m"
-#        max-file: "3"
+  dify-api:
+    image: langgenius/dify-api:1.3.1
+    hostname: api
+#    restart: always
+    environment:
+      # Startup mode, 'api' starts the API server.
+      MODE: api
+    depends_on:
+      - mypostgres
+      - myredisstack
+    volumes:
+      # Mount the storage directory to the container, for storing user files.
+      - /mnt/data/vergil/dify/storage:/app/api/storage
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    env_file:
+      - dify/dify.env
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
-#  dify-worker:
-#    image: langgenius/dify-api:1.2.0
-#    hostname: worker
-##    restart: always
-#    environment:
-#      # Startup mode, 'worker' starts the Celery worker for processing the queue.
-#      MODE: worker
-#    depends_on:
-#      - mypostgres
-#      - myredisstack
-#    volumes:
-#      # Mount the storage directory to the container, for storing user files.
-#      - /mnt/data/vergil/dify/storage:/app/api/storage
-#    extra_hosts:
-#      - host.docker.internal:host-gateway
-#    env_file:
-#      - dify/dify.env
-#    logging:
-#      options:
-#        max-size: "10m"
-#        max-file: "3"
+  dify-worker:
+    image: langgenius/dify-api:1.3.1
+    hostname: worker
+#    restart: always
+    environment:
+      # Startup mode, 'worker' starts the Celery worker for processing the queue.
+      MODE: worker
+    depends_on:
+      - mypostgres
+      - myredisstack
+    volumes:
+      # Mount the storage directory to the container, for storing user files.
+      - /mnt/data/vergil/dify/storage:/app/api/storage
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    env_file:
+      - dify/dify.env
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
-#  dify-web:
-#    image: langgenius/dify-web:1.2.0
-#    hostname: web
-#    extra_hosts:
-#      - host.docker.internal:host-gateway
-##    restart: always
-#    env_file:
-#      - dify/dify.env
-#    logging:
-#      options:
-#        max-size: "10m"
-#        max-file: "3"
+  dify-web:
+    image: langgenius/dify-web:1.2.0
+    hostname: web
+    extra_hosts:
+      - host.docker.internal:host-gateway
+#    restart: always
+    env_file:
+      - dify/dify.env
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   # The nginx reverse proxy.
   # used for reverse proxying the API service and Web service.
