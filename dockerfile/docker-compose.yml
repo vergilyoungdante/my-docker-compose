@@ -11,36 +11,18 @@ networks:
 
 
 services:
-#  建议用redis-stack,这两个端口冲突，不能部署在同一台机器
-#  myredis:
-#    build:
-#      context: redis/
-#      dockerfile: redis.dockerfile
-#    container_name: vergil-redis
-#    hostname: vergil-redis
-#    volumes:
-#      - /mnt/data/vergil/redis:/data
-#    ports:
-#      - 26379:6379
-##    deploy:
-##      resources:
-##        limits:
-##          cpus: 4
-##          memory: 8G
-#    healthcheck:
-#      test: [ "CMD", "redis-cli","ping" ]
-  myredisstack:
+
+  myredis:
     build:
-      context: redis-stack/
+      context: redis/
       dockerfile: redis.dockerfile
-    image: myredisstack:7.4.0-v3
-    container_name: vergil-redis-stack
+    container_name: vergil-redis
     hostname: vergil-redis
+    volumes:
+      - /mnt/data/vergil/redis:/data
     ports:
       - 26379:6379
     restart: always
-    volumes:
-      - /mnt/data/vergil/redis:/data
     healthcheck:
       test: [ "CMD", "redis-cli","ping" ]
     logging:
@@ -485,7 +467,7 @@ services:
       - host.docker.internal:host-gateway
     depends_on:
       - ollama
-      - myredisstack
+      - myredis
       - mypostgres
     logging:
       options:
@@ -628,7 +610,7 @@ services:
       - /mnt/data/vergil/gitlab:/var/opt/gitlab
     depends_on:
       - mypostgres
-      - myredisstack
+      - myredis
     logging:
       options:
         max-size: "10m"
@@ -644,7 +626,7 @@ services:
       MODE: api
     depends_on:
       - mypostgres
-      - myredisstack
+      - myredis
     volumes:
       # Mount the storage directory to the container, for storing user files.
       - /mnt/data/vergil/dify/storage:/app/api/storage
@@ -666,7 +648,7 @@ services:
       MODE: worker
     depends_on:
       - mypostgres
-      - myredisstack
+      - myredis
     volumes:
       # Mount the storage directory to the container, for storing user files.
       - /mnt/data/vergil/dify/storage:/app/api/storage
