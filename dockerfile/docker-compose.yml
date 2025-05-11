@@ -680,9 +680,7 @@ services:
     image: nginx:latest
     restart: always
     volumes:
-      - /mnt/data/vergil/dify/nginx/nginx.conf.template:/etc/nginx/nginx.conf.template
-      - /mnt/data/vergil/dify/nginx/proxy.conf.template:/etc/nginx/proxy.conf.template
-      - /mnt/data/vergil/dify/nginx/conf.d:/etc/nginx/conf.d
+      - /mnt/data/vergil/dify/nginx:/etc/nginx
       - /mnt/data/vergil/dify/nginx/docker-entrypoint.sh:/docker-entrypoint-mount.sh
     entrypoint:
       [
