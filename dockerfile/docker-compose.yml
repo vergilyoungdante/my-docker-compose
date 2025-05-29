@@ -161,7 +161,7 @@ services:
 #        max-file: "3"
 
   minio:
-    image: minio/minio:RELEASE.2025-05-24T17-08-30Z
+    image: minio/minio:RELEASE.2025-04-08T15-41-24Z
     privileged: true
     container_name: myminio
     ports:
@@ -192,6 +192,7 @@ services:
     image: nacos/nacos-server:v3.0.1
     container_name: mynacos
     ports:
+      - 28080:8080
       - 28848:8848
       - 29848:9848
     volumes:
@@ -254,18 +255,19 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  milvus:
-    image: mymilvus:v2.5.9
+  mymilvus:
     build:
       context: milvus/
       dockerfile: milvus.dockerfile
-#    image: milvusdb/milvus:v2.5.4
+    #    image: milvusdb/milvus:v2.5.12
     container_name: milvus-standalone
     hostname: milvus-standalone
     command: ["milvus", "run", "standalone"]
     environment:
       ETCD_ENDPOINTS: etcd:2379
       MINIO_ADDRESS: minio:9000
+    security_opt:
+      - seccomp:unconfined
     volumes:
       - /mnt/data/vergil/milvus:/var/lib/milvus
     ports:
@@ -293,7 +295,7 @@ services:
     ports:
       - "33000:3000"
     depends_on:
-      - "milvus"
+      - "mymilvus"
 
 #  palu:
 #    container_name: mypalu

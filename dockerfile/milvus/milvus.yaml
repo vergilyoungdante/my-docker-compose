@@ -105,13 +105,13 @@ minio:
   # minio.accessKeyID and minio.secretAccessKey together are used for identity authentication to access the MinIO or S3 service.
   # This configuration must be set identical to the environment variable MINIO_ACCESS_KEY_ID, which is necessary for starting MinIO or S3.
   # The default value applies to MinIO or S3 service that started with the default docker-compose.yml file.
-  accessKeyID: InV5AW7gpmyrr8IhCF02
+  accessKeyID: qV6eAS2B9dfBycYix9mi
   # Secret key used to encrypt the signature string and verify the signature string on server. It must be kept strictly confidential and accessible only to the MinIO or S3 server and users.
   # Environment variable: MINIO_SECRET_ACCESS_KEY or minio.secretAccessKey
   # minio.accessKeyID and minio.secretAccessKey together are used for identity authentication to access the MinIO or S3 service.
   # This configuration must be set identical to the environment variable MINIO_SECRET_ACCESS_KEY, which is necessary for starting MinIO or S3.
   # The default value applies to MinIO or S3 service that started with the default docker-compose.yml file.
-  secretAccessKey: Fzykpr5SZv84ZzVw8s0CE46RbJer2taOCDLzeuzl
+  secretAccessKey: ccuOGxoyu76EjpBQ6jIxS8bxJxIQhbwr9hBajk8N
   useSSL: false # Switch value to control if to access the MinIO or S3 service through SSL.
   ssl:
     tlsCACert: /path/to/public.crt # path to your CACert file
@@ -121,7 +121,7 @@ minio:
   # To share an MinIO instance among multiple Milvus instances, consider changing this to a different value for each Milvus instance before you start them. For details, see Operation FAQs.
   # The data will be stored in the local Docker if Docker is used to start the MinIO service locally. Ensure that there is sufficient storage space.
   # A bucket name is globally unique in one MinIO or S3 instance.
-  bucketName: "milvus"
+  bucketName: milvus
   # Root prefix of the key to where Milvus stores data in MinIO or S3.
   # It is recommended to change this parameter before starting Milvus for the first time.
   # To share an MinIO instance among multiple Milvus instances, consider changing this to a different value for each Milvus instance before you start them. For details, see Operation FAQs.
@@ -176,9 +176,6 @@ mq:
     mergeCheckInterval: 1 # the interval time(in seconds) for dispatcher to check whether to merge
     targetBufSize: 16 # the lenth of channel buffer for targe
     maxTolerantLag: 3 # Default value: "3", the timeout(in seconds) that target sends msgPack
-    maxDispatcherNumPerPchannel: 5 # The maximum number of dispatchers per physical channel, primarily to limit the number of consumers and prevent performance issues(e.g., during recovery when a large number of channels are watched).
-    retrySleep: 3 # register retry sleep time in seconds
-    retryTimeout: 60 # register retry timeout in seconds
 
 # Related configuration of pulsar, used to manage Milvus logs of recent mutation operations, output streaming log, and provide log publish-subscribe services.
 pulsar:
@@ -361,7 +358,8 @@ queryCoord:
   balanceCostThreshold: 0.001 # the threshold of balance cost, if the difference of cluster's cost after executing the balance plan is less than this value, the plan will not be executed
   checkSegmentInterval: 1000
   checkChannelInterval: 1000
-  checkBalanceInterval: 3000
+  checkBalanceInterval: 300
+  autoBalanceInterval: 3000 # the interval for triggerauto balance
   checkIndexInterval: 10000
   channelTaskTimeout: 60000 # 1 minute
   segmentTaskTimeout: 120000 # 2 minute
@@ -407,12 +405,18 @@ queryNode:
       # Milvus will eventually seals and indexes all segments, but enabling this optimizes search performance for immediate queries following data insertion.
       # This defaults to true, indicating that Milvus creates temporary index for growing segments and the sealed segments that are not indexed upon searches.
       enableIndex: true
-      nlist: 128 # temp index nlist, recommend to set sqrt(chunkRows), must smaller than chunkRows/8
+      nlist: 128 # interim index nlist, recommend to set sqrt(chunkRows), must smaller than chunkRows/8
       nprobe: 16 # nprobe to search small index, based on your accuracy requirement, must smaller than nlist
+      subDim: 4 # interim index sub dim, recommend to (subDim % vector dim == 0)
+      refineRatio: 4.5 # interim index parameters, should set to be >= 1.0
+      refineQuantType: NONE # Data representation of SCANN_DVR index, options: 'NONE', 'FLOAT16', 'BFLOAT16' and 'UINT8'
+      refineWithQuant: true # whether to use refineQuantType to refine for fatser but loss a little precision
+      denseVectorIndexType: IVF_FLAT_CC # Dense vector intermin index type
       memExpansionRate: 1.15 # extra memory needed by building interim index
       buildParallelRate: 0.5 # the ratio of building interim index parallel matched with cpu num
     multipleChunkedEnable: true # Enable multiple chunked search
     knowhereScoreConsistency: false # Enable knowhere strong consistency score computation logic
+    jsonKeyStatsCommitInterval: 200 # the commit interval for the JSON key Stats to commit
   loadMemoryUsageFactor: 1 # The multiply factor of calculating the memory usage while loading segments
   enableDisk: false # enable querynode load disk index, and search on disk index
   maxDiskUsagePercentage: 95
@@ -475,6 +479,7 @@ queryNode:
       maxPendingTaskPerUser: 1024 # Max pending task per user in scheduler
   levelZeroForwardPolicy: FilterByBF # delegator level zero deletion forward policy, possible option["FilterByBF", "RemoteLoad"]
   streamingDeltaForwardPolicy: FilterByBF # delegator streaming deletion forward policy, possible option["FilterByBF", "Direct"]
+  forwardBatchSize: 4194304 # the batch size delegator uses for forwarding stream delete in loading procedure
   dataSync:
     flowGraph:
       maxQueueLength: 16 # The maximum size of task queue cache in flow graph in query node.
@@ -505,8 +510,6 @@ indexCoord:
 indexNode:
   scheduler:
     buildParallel: 1
-  enableDisk: true # enable index node build disk vector index
-  maxDiskUsagePercentage: 95
   ip:  # TCP/IP address of indexNode. If not specified, use the first unicastable address
   port: 21121 # TCP port of indexNode
   grpc:
@@ -552,7 +555,18 @@ dataCoord:
       # The size threshold in MB, if the total size of growing segments of each shard
       # exceeds this threshold, the largest growing segment will be sealed.
       growingSegmentsMemSize: 4096
+      # If the total entry number of l0 logs of each shard
+      # exceeds this threshold, the earliest growing segments will be sealed.
+      blockingL0EntryNum: 5000000
+      # The size threshold in MB, if the total entry number of l0 logs of each shard
+      # exceeds this threshold, the earliest growing segments will be sealed.
+      blockingL0SizeInMB: 64
   autoUpgradeSegmentIndex: false # whether auto upgrade segment index to index engine's version
+  forceRebuildSegmentIndex: false # force rebuild segment index to specify index engine's version
+  # if param forceRebuildSegmentIndex is enabled, the vector index will be rebuilt to aligned with targetVecIndexVersion.
+  # if param forceRebuildSegmentIndex is not enabled, the newly created vector index will be aligned with the newer one of index engine's version and targetVecIndexVersion.
+  # if param targetVecIndexVersion is not set, the default value is -1, which means no target vec index version, then the vector index will be aligned with index engine's version
+  targetVecIndexVersion: -1
   segmentFlushInterval: 2 # the minimal interval duration(unit: Seconds) between flusing operation on same segment
   # Switch value to control if to enable segment compaction.
   # Compaction merges small-size segments into a large segment, and clears the entities deleted beyond the rentention duration of Time Travel.
@@ -569,7 +583,7 @@ dataCoord:
     taskPrioritizer: default
     taskQueueCapacity: 100000 # compaction task queue size
     rpcTimeout: 10
-    maxParallelTaskNum: -1 # Deprecated, see datanode.slot.slotCap
+    maxParallelTaskNum: 10
     dropTolerance: 86400 # Compaction task will be cleaned after finish longer than this time(in seconds)
     gcInterval: 1800 # The time interval in seconds for compaction gc
     scheduleInterval: 500 # The time interval in milliseconds for scheduling compaction tasks. If the configuration setting is below 100ms, it will be ajusted upwards to 100ms
@@ -582,6 +596,7 @@ dataCoord:
         maxSize: 67108864 # The maxmum size in bytes to force trigger a LevelZero Compaction, default as 64MB
         deltalogMinNum: 10 # The minimum number of deltalog files to force trigger a LevelZero Compaction
         deltalogMaxNum: 30 # The maxmum number of deltalog files to force trigger a LevelZero Compaction, default as 30
+    forceExpiryInterval: -1 # interval in hours to do force expiry compaction, -1 means disable force expiry compaction
     single:
       ratio:
         threshold: 0.2 # The ratio threshold of a segment to trigger a single compaction, default as 0.2
@@ -634,6 +649,13 @@ dataCoord:
     clusteringCompactionUsage: 16 # slot usage of clustering compaction job.
     mixCompactionUsage: 8 # slot usage of mix compaction job.
     l0DeleteCompactionUsage: 8 # slot usage of l0 compaction job.
+    indexTaskSlotUsage: 64 # slot usage of index task per 512mb
+    statsTaskSlotUsage: 8 # slot usage of stats task per 512mb
+    analyzeTaskSlotUsage: 65535 # slot usage of analyze task
+  jsonStatsTriggerCount: 10 # jsonkey stats task count per trigger
+  jsonStatsTriggerInterval: 10 # jsonkey task interval per trigger
+  enabledJSONKeyStatsInSort: false # Indicates whether to enable JSON key stats task with sort
+  jsonKeyStatsMemoryBudgetInTantivy: 16777216 # the memory budget for the JSON index In Tantivy, the unit is bytes
   ip:  # TCP/IP address of dataCoord. If not specified, use the first unicastable address
   port: 13333 # TCP port of dataCoord
   grpc:
@@ -773,7 +795,7 @@ log:
 grpc:
   log:
     level: WARNING
-  gracefulStopTimeout: 10 # second, time to wait graceful stop finish
+  gracefulStopTimeout: 3 # second, time to wait graceful stop finish
   client:
     compressionEnabled: false
     dialTimeout: 200
@@ -830,8 +852,11 @@ common:
     # The superusers will ignore some system check processes,
     # like the old password verification when updating the credential
     superUsers:
-    defaultRootPassword: "Milvus" # default password for root user. The maximum length is 72 characters, and double quotes are required.
+    # default password for root user. The maximum length is 72 characters.
+    # Large numeric passwords require double quotes to avoid yaml parsing precision issues.
+    defaultRootPassword: xyfs2023
     rootShouldBindRole: false # Whether the root user should bind a role when the authorization is enabled.
+    enablePublicPrivilege: true # Whether to enable public privilege
     rbac:
       overrideBuiltInPrivilegeGroups:
         enabled: false # Whether to override build-in privilege groups
@@ -887,6 +912,10 @@ common:
   localRPCEnabled: false # enable local rpc for internal communication when mix or standalone mode.
   sync:
     taskPoolReleaseTimeoutSeconds: 60 # The maximum time to wait for the task to finish and release resources in the pool
+  enabledOptimizeExpr: true # Indicates whether to enable optimize expr
+  enabledJSONKeyStats: false # Indicates sealedsegment whether to enable JSON key stats
+  enabledGrowingSegmentJSONKeyStats: false # Indicates growingsegment whether to enable JSON key stats
+  enableConfigParamTypeCheck: true # Indicates whether to enable config param type check
 
 # QuotaConfig, configurations of Milvus quota and limits.
 # By default, we enable:
@@ -905,6 +934,7 @@ quotaAndLimits:
   # collects metrics from Proxies, Query cluster and Data cluster.
   # seconds, (0 ~ 65536)
   quotaCenterCollectInterval: 3
+  forceDenyAllDDL: false # true to force deny all DDL requests, false to allow.
   limits:
     allocRetryTimes: 15 # retry times when delete alloc forward data from rate limit failed
     allocWaitInterval: 1000 # retry wait duration when delete alloc forward data rate failed, in millisecond
@@ -953,6 +983,13 @@ quotaAndLimits:
     max: -1
     db:
       max: -1 # qps of db level, default no limit, rate for manualCompaction
+  dbRate:
+    enabled: false # Whether DB request throttling is enabled
+    # Maximum number of db-related requests per second.
+    # Setting this item to 10 indicates that Milvus processes no more than 10 db-related requests per second, including db creation/drop/alter requests.
+    # To use this setting, set quotaAndLimits.dbRate.enabled to true at the same time.
+    #
+    max: -1
   dml:
     enabled: false # Whether DML request throttling is enabled.
     insertRate:
@@ -1105,7 +1142,6 @@ trace:
 gpu:
   initMemSize: 2048 # Gpu Memory Pool init size
   maxMemSize: 4096 # Gpu Memory Pool Max size
-  overloadedMemoryThresholdPercentage: 95
 
 # Any configuration related to the streaming node server.
 streamingNode:
