@@ -1,3 +1,4 @@
+version: '3.8'
 
 networks:
   #给监控用的，node_exporter什么的不暴露外网
@@ -31,7 +32,7 @@ services:
         max-file: "3"
 
   mypostgres:
-    image: postgres:17.4
+    image: postgres:17.5
     container_name: vergil-postgres
     hostname: vergil-postgres
     user: root
@@ -77,7 +78,6 @@ services:
         max-file: "3"
 
   mymysql:
-    image: mymysql:9.3.0
     build:
       context: mysql/
       dockerfile: mysql.dockerfile
@@ -161,7 +161,7 @@ services:
 #        max-file: "3"
 
   minio:
-    image: minio/minio:RELEASE.2025-04-08T15-41-24Z
+    image: minio/minio:RELEASE.2025-05-24T17-08-30Z
     privileged: true
     container_name: myminio
     ports:
@@ -189,37 +189,19 @@ services:
         max-file: "3"
 
   mynacos:
-    image: nacos/nacos-server:v2.5.1
+    image: nacos/nacos-server:v3.0.1
     container_name: mynacos
     ports:
       - 28848:8848
       - 29848:9848
     volumes:
       - /mnt/data/vergil/nacos:/home/nacos/logs
-    environment:
-      - NACOS_AUTH_ENABLE=true
-      - NACOS_AUTH_IDENTITY_KEY=123456
-      - NACOS_AUTH_IDENTITY_VALUE=123456
-      - NACOS_AUTH_TOKEN=MTIzNDU2Nzg5MTIzNDU2Nzg5MTIzNDU2Nzg5MTIzNDU2Nzg5
-      - MODE=standalone
-      - SPRING_DATASOURCE_PLATFORM=mysql
-      # 必须给nacos配置公网IP，要不然注册的服务也拿不到公网IP
-      - NACOS_SERVER_IP=223.72.5.245
-      - MYSQL_SERVICE_HOST=223.72.5.245
-      - MYSQL_SERVICE_DB_NAME=nacos_dev
-      - MYSQL_SERVICE_PORT=23306
-      - MYSQL_SERVICE_USER=nacosvergil
-      - MYSQL_SERVICE_PASSWORD=nacosxyfs2023
-      - MYSQL_SERVICE_DB_PARAM=characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true
+    env_file:
+      - nacos/nacos.env
     depends_on:
       mymysql:
         condition: service_healthy
     restart: always
-#    deploy:
-#      resources:
-#        limits:
-#          cpus: 4
-#          memory: 8G
     logging:
       options:
         max-size: "10m"
@@ -377,7 +359,10 @@ services:
     ports:
       - 29091:9090
     volumes:
-      - /mnt/data/monitor/config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - type: bind
+        source: /mnt/data/monitor/config/prometheus.yml
+        target: /etc/prometheus/prometheus.yml
+        read_only: true
       - /mnt/data/monitor/prometheus_data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
@@ -414,7 +399,7 @@ services:
         max-file: "3"
 
   ollama:
-    image: ollama/ollama:0.6.8
+    image: ollama/ollama:0.8.0
     container_name: ollama
     hostname: ollama
     restart: unless-stopped
@@ -434,7 +419,7 @@ services:
         max-file: "3"
 
   open-webui:
-    image: ghcr.io/open-webui/open-webui:0.6.5
+    image: ghcr.io/open-webui/open-webui:0.6.12
     container_name: open-webui
     hostname: open-webui
     volumes:
@@ -474,21 +459,21 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  mcpo:
-    image: ghcr.io/open-webui/mcpo:main
-    container_name: mcpo
-    ports:
-      - 28000:8000
-    #    command: uvx mcpo --port 8000 -- uvx mcp-server-time --local-timezone=Asia/Shanghai
-    command: uvx mcpo --port 8000 --config /app/config/config.json
-    volumes:
-      - /mnt/data/vergil/mcpo/config:/app/config
-    depends_on:
-      - open-webui
-    logging:
-      options:
-        max-size: "10m"
-        max-file: "3"
+  #  mcpo:
+  #    image: ghcr.io/open-webui/mcpo:main
+  #    container_name: mcpo
+  #    ports:
+  #      - 28000:8000
+  #    #    command: uvx mcpo --port 8000 -- uvx mcp-server-time --local-timezone=Asia/Shanghai
+  #    command: uvx mcpo --port 8000 --config /app/config/config.json
+  #    volumes:
+  #      - /mnt/data/vergil/mcpo/config:/app/config
+  #    depends_on:
+  #      - open-webui
+  #    logging:
+  #      options:
+  #        max-size: "10m"
+  #        max-file: "3"
 
   # 给大模型用的私有搜索引擎,部署失败
 #  searxng:
@@ -615,6 +600,30 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+  #智能爬虫，目前给dify用，已集成MCP
+  crawl4ai:
+    image: unclecode/crawl4ai:0.6.0-r2
+    ports:
+      - "11235:11235"  # Gunicorn port
+    volumes:
+      - /mnt/data/vergil/ollama/crawl4ai/dev/shm:/dev/shm  # Chromium performance
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+        reservations:
+          memory: 1G
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:11235/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 # 下面是dify
   dify-api:
@@ -630,6 +639,8 @@ services:
     volumes:
       # Mount the storage directory to the container, for storing user files.
       - /mnt/data/vergil/dify/storage:/app/api/storage
+    ports:
+      - 25001:5001
     extra_hosts:
       - host.docker.internal:host-gateway
     env_file:
@@ -731,10 +742,13 @@ services:
   # used for reverse proxying the API service and Web service.
   nginx:
     image: nginx:latest
-    restart: always
+    restart: unless-stopped
     volumes:
       - /mnt/data/vergil/dify/nginx:/etc/nginx
-      - /mnt/data/vergil/dify/nginx/docker-entrypoint.sh:/docker-entrypoint-mount.sh
+      - type: bind
+        source: /mnt/data/vergil/dify/nginx/docker-entrypoint.sh
+        target: /docker-entrypoint-mount.sh
+        read_only: true
     entrypoint:
       [
         'sh',
