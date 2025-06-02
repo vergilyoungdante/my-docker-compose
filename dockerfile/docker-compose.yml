@@ -401,7 +401,7 @@ services:
         max-file: "3"
 
   ollama:
-    image: ollama/ollama:0.8.0
+    image: ollama/ollama:0.9.0
     container_name: ollama
     hostname: ollama
     restart: unless-stopped
@@ -421,7 +421,7 @@ services:
         max-file: "3"
 
   open-webui:
-    image: ghcr.io/open-webui/open-webui:0.6.12
+    image: ghcr.io/open-webui/open-webui:0.6.13
     container_name: open-webui
     hostname: open-webui
     volumes:
@@ -534,7 +534,7 @@ services:
 #        max-file: "3"
 
   mygitlab:
-    image: gitlab/gitlab-ce:17.11.0-ce.0
+    image: gitlab/gitlab-ce:18.0.1-ce.0
     container_name: gitlab
     user: root
 #    restart: always
