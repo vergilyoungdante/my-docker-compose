@@ -7,8 +7,11 @@ networks:
     ipam:
       config:
         - subnet: 172.19.0.0/16
-  elastic:
+#  elastic:
+#    driver: bridge
+  ssrf_proxy_network:
     driver: bridge
+    internal: true
 
 
 services:
@@ -289,7 +292,7 @@ services:
 
   attu:
     container_name: attu
-    image: zilliz/attu:v2.5.12
+    image: zilliz/attu:v2.5.10
     environment:
       MILVUS_URL: milvus-standalone:19530
     ports:
@@ -548,14 +551,14 @@ services:
         GITLAB_OMNIBUS_CONFIG: |
           registry_external_url 'http://223.72.5.245:20080'
           gitlab_rails['time_zone'] = 'Asia/Shanghai'
-          gitlab_rails['initial_root_password'] = 'xyfs2023'
+          gitlab_rails['initial_root_password'] = 'xyfs2025'
           postgresql['enable'] = false 
           gitlab_rails['db_adapter'] = 'postgresql'
           gitlab_rails['db_encoding'] = 'utf8'
           gitlab_rails['db_host'] = 'vergil-postgres'
           gitlab_rails['db_port'] = 5432
           gitlab_rails['db_username'] = 'gitlab'
-          gitlab_rails['db_password'] = 'xyfs2023'
+          gitlab_rails['db_password'] = 'xyfs2025'
           gitlab_rails['gitlab_email_from'] = 'yjb387759719@outlook.com'
           gitlab_rails['gitlab_email_reply_to'] = 'yjb387759719@outlook.com'
           gitlab_rails['microsoft_graph_mailer_enabled'] = false
@@ -647,6 +650,9 @@ services:
       - host.docker.internal:host-gateway
     env_file:
       - dify/dify.env
+    networks:
+      - ssrf_proxy_network
+      - default
     logging:
       options:
         max-size: "10m"
@@ -673,6 +679,9 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+    networks:
+      - ssrf_proxy_network
+      - default
 
   dify-web:
     image: langgenius/dify-web:1.4.1
@@ -709,10 +718,16 @@ services:
       test: [ 'CMD', 'curl', '-f', 'http://localhost:8194/health' ]
     extra_hosts:
       - host.docker.internal:host-gateway
+    networks:
+      - ssrf_proxy_network
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   plugin_daemon:
     image: langgenius/dify-plugin-daemon:0.1.1-local
-    restart: always
+    restart: unless-stopped
     environment:
       DB_DATABASE: ${DB_PLUGIN_DATABASE:-dify_plugin}
       SERVER_PORT: ${PLUGIN_DAEMON_PORT:-5002}
@@ -726,8 +741,8 @@ services:
       PLUGIN_WORKING_PATH: ${PLUGIN_WORKING_PATH:-/app/storage/cwd}
       FORCE_VERIFYING_SIGNATURE: ${FORCE_VERIFYING_SIGNATURE:-true}
       PYTHON_ENV_INIT_TIMEOUT: ${PLUGIN_PYTHON_ENV_INIT_TIMEOUT:-120}
-      PLUGIN_MAX_EXECUTION_TIMEOUT: ${PLUGIN_MAX_EXECUTION_TIMEOUT:-600}
-      PIP_MIRROR_URL: ${PIP_MIRROR_URL:-}
+      PLUGIN_MAX_EXECUTION_TIMEOUT: ${PLUGIN_MAX_EXECUTION_TIMEOUT:-2400}
+      PIP_MIRROR_URL: ${PIP_MIRROR_URL:-https://mirrors.aliyun.com/pypi/simple}
       PLUGIN_STORAGE_TYPE: ${PLUGIN_STORAGE_TYPE:-local}
       PLUGIN_STORAGE_LOCAL_ROOT: ${PLUGIN_STORAGE_LOCAL_ROOT:-/app/storage}
       PLUGIN_INSTALLED_PATH: ${PLUGIN_INSTALLED_PATH:-plugin}
@@ -739,6 +754,34 @@ services:
       - 5003:5003
     volumes:
       - /mnt/data/vergil/dify/plugin_daemon/storage:/app/storage
+
+  ssrf_proxy:
+    image: ubuntu/squid:latest
+    restart: always
+    volumes:
+      - type: bind
+        source: /mnt/data/vergil/dify/ssrf_proxy/docker-entrypoint.sh
+        target: /docker-entrypoint-mount.sh
+        read_only: true
+      - type: bind
+        source: /mnt/data/vergil/dify/ssrf_proxy/squid.conf.template
+        target: /etc/squid/squid.conf.template
+        read_only: true
+    entrypoint: [ 'sh', '-c', "cp /docker-entrypoint-mount.sh /docker-entrypoint.sh && sed -i 's/\r$$//' /docker-entrypoint.sh && chmod +x /docker-entrypoint.sh && /docker-entrypoint.sh" ]
+    environment:
+      # pls clearly modify the squid env vars to fit your network environment.
+      HTTP_PORT: ${SSRF_HTTP_PORT:-3128}
+      COREDUMP_DIR: ${SSRF_COREDUMP_DIR:-/var/spool/squid}
+      REVERSE_PROXY_PORT: ${SSRF_REVERSE_PROXY_PORT:-8194}
+      SANDBOX_HOST: ${SSRF_SANDBOX_HOST:-sandbox}
+      SANDBOX_PORT: ${SANDBOX_PORT:-8194}
+    networks:
+      - ssrf_proxy_network
+      - default
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   # The nginx reverse proxy.
   # used for reverse proxying the API service and Web service.
