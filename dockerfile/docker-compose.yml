@@ -820,6 +820,38 @@ services:
         max-size: "10m"
         max-file: "3"
 
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.2.5
+    restart: unless-stopped
+    environment:
+      KC_DB: postgres
+      KC_DB_PASSWORD: keycloak
+      KC_DB_URL: jdbc:postgresql://vergil-postgres/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_HEALTH_ENABLE: true
+      KC_BOOTSTRAP_ADMIN_USERNAME: vergil
+      KC_BOOTSTRAP_ADMIN_PASSWORD: xyfs2025
+      KC_HTTP_ENABLE: true
+      KC_HTTPS_ENABLED: false
+      KC_HOSTNAME: 223.72.5.245
+      KC_HOSTNAME_STRICT: false
+      KC_HOSTNAME_STRICT_HTTPS: false
+      KC_METRICS_ENABLED: true
+      KC_HTTPS_CLIENT_AUTH: none
+      KC_HTTPS_MANAGEMENT_CLIENT_AUTH: none
+    command:
+      - 'start-dev'
+    depends_on:
+      - mypostgres
+    ports:
+      - 38080:8080
+      - 28443:8443
+      - 39000:9000
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+
 #  radicale:
 #    image: tomsquest/docker-radicale:3.3.1.0
 #    init: true
