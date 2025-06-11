@@ -852,29 +852,30 @@ services:
         max-size: "10m"
         max-file: "3"
 
-#  radicale:
-#    image: tomsquest/docker-radicale:3.3.1.0
-#    init: true
-#    read_only: true
-#    security_opt:
-#      - no-new-privileges:true
-#    cap_drop:
-#      - ALL
-#    cap_add:
-#      - SETUID
-#      - SETGID
-#      - CHOWN
-#      - KILL
-#    healthcheck:
-#      test: curl -f http://127.0.0.1:5232 || exit 1
-#      interval: 30s
-#      retries: 3
-#    restart: unless-stopped
-#    ports:
-#      - 25232:5232
-#    volumes:
-#      - /mnt/data/wangjs35/radicale/data:/data
-#      - /mnt/data/wangjs35/radicale/config:/config:ro
+  # bilinote服务
+  bilinote-backend:
+    image: jefferyhjw/bilinote-backend:latest
+    container_name: bilinote-backend
+    hostname: backend
+    restart: unless-stopped
+    env_file:
+      - bilinote/bilinote.env
+
+  bilinote-frontend:
+    image: jefferyhjw/bilinote-frontend:latest
+    container_name: bilinote-frontend
+    hostname: frontend
+    restart: unless-stopped
+
+  bilinote-nginx:
+    image: jefferyhjw/bilinote-nginx:latest
+    container_name: bilinote-nginx
+    ports:
+      - "40080:80"
+    depends_on:
+      - bilinote-backend
+      - bilinote-frontend
+    restart: unless-stopped
 
 #  mcsweb:
 #    image: githubyumao/mcsmanager-web:latest
@@ -897,11 +898,3 @@ services:
 #      - /mnt/data/vergil/mcsmanage/daemon/data:/opt/mcsmanager/daemon/data
 #      - /mnt/data/vergil/mcsmanage/daemon/logs:/opt/mcsmanager/daemon/logs
 #      - /var/run/docker.sock:/var/run/docker.sock
-
-#  rimworld:
-#    image: dalcop/rimworld-together:25.1.2.1
-#    restart: unless-stopped
-#    ports:
-#      - 25555:25555
-#    volumes:
-#      - /mnt/data/wangyb80/rimworld:/Data
