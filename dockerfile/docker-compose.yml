@@ -66,7 +66,7 @@ services:
         max-file: "3"
 
   myrabbitmq:
-    image: rabbitmq:4.1.0-management
+    image: rabbitmq:4.1.1-management
     container_name: vergil-rabbitmq
     ports:
       - 25672:5672
@@ -404,7 +404,7 @@ services:
         max-file: "3"
 
   ollama:
-    image: ollama/ollama:0.9.0
+    image: ollama/ollama:0.9.2
     container_name: ollama
     hostname: ollama
     restart: unless-stopped
@@ -424,7 +424,7 @@ services:
         max-file: "3"
 
   open-webui:
-    image: ghcr.io/open-webui/open-webui:0.6.13
+    image: ghcr.io/open-webui/open-webui:0.6.15
     container_name: open-webui
     hostname: open-webui
     volumes:
@@ -537,7 +537,7 @@ services:
 #        max-file: "3"
 
   mygitlab:
-    image: gitlab/gitlab-ce:18.0.1-ce.0
+    image: gitlab/gitlab-ce:18.0.2-ce.0
     container_name: gitlab
     user: root
 #    restart: always
@@ -632,7 +632,7 @@ services:
 
 # 下面是dify
   dify-api:
-    image: langgenius/dify-api:1.4.1
+    image: langgenius/dify-api:1.4.3
     hostname: api
 #    restart: always
     environment:
@@ -659,7 +659,7 @@ services:
         max-file: "3"
 
   dify-worker:
-    image: langgenius/dify-api:1.4.1
+    image: langgenius/dify-api:1.4.3
     hostname: worker
 #    restart: always
     environment:
@@ -684,7 +684,7 @@ services:
       - default
 
   dify-web:
-    image: langgenius/dify-web:1.4.1
+    image: langgenius/dify-web:1.4.3
     hostname: web
     extra_hosts:
       - host.docker.internal:host-gateway
@@ -726,7 +726,7 @@ services:
         max-file: "3"
 
   plugin_daemon:
-    image: langgenius/dify-plugin-daemon:0.1.1-local
+    image: langgenius/dify-plugin-daemon:0.1.2-local
     restart: unless-stopped
     environment:
       DB_DATABASE: ${DB_PLUGIN_DATABASE:-dify_plugin}
