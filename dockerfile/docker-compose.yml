@@ -853,29 +853,29 @@ services:
         max-file: "3"
 
   # bilinote服务
-  bilinote-backend:
-    image: jefferyhjw/bilinote-backend:latest
-    container_name: bilinote-backend
-    hostname: backend
-    restart: unless-stopped
-    env_file:
-      - bilinote/bilinote.env
+#  bilinote-backend:
+#    image: jefferyhjw/bilinote-backend:latest
+#    container_name: bilinote-backend
+#    hostname: backend
+#    restart: unless-stopped
+#    env_file:
+#      - bilinote/bilinote.env
 
-  bilinote-frontend:
-    image: jefferyhjw/bilinote-frontend:latest
-    container_name: bilinote-frontend
-    hostname: frontend
-    restart: unless-stopped
+#  bilinote-frontend:
+#    image: jefferyhjw/bilinote-frontend:latest
+#    container_name: bilinote-frontend
+#    hostname: frontend
+#    restart: unless-stopped
 
-  bilinote-nginx:
-    image: jefferyhjw/bilinote-nginx:latest
-    container_name: bilinote-nginx
-    ports:
-      - "40080:80"
-    depends_on:
-      - bilinote-backend
-      - bilinote-frontend
-    restart: unless-stopped
+#  bilinote-nginx:
+#    image: jefferyhjw/bilinote-nginx:latest
+#    container_name: bilinote-nginx
+#    ports:
+#      - "40080:80"
+#    depends_on:
+#      - bilinote-backend
+#      - bilinote-frontend
+#    restart: unless-stopped
 
 #  mcsweb:
 #    image: githubyumao/mcsmanager-web:latest
