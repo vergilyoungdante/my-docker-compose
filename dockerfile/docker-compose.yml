@@ -752,6 +752,8 @@ services:
       - dify/dify.env
     ports:
       - 5003:5003
+    extra_hosts:
+      - host.docker.internal:host-gateway
     volumes:
       - /mnt/data/vergil/dify/plugin_daemon/storage:/app/storage
 
