@@ -632,7 +632,7 @@ services:
 
 # 下面是dify
   dify-api:
-    image: langgenius/dify-api:1.5.0
+    image: langgenius/dify-api:1.5.1
     hostname: api
 #    restart: always
     environment:
@@ -663,7 +663,7 @@ services:
         max-file: "3"
 
   dify-worker:
-    image: langgenius/dify-api:1.5.0
+    image: langgenius/dify-api:1.5.1
     hostname: worker
 #    restart: always
     environment:
@@ -692,7 +692,7 @@ services:
       - default
 
   dify-web:
-    image: langgenius/dify-web:1.5.0
+    image: langgenius/dify-web:1.5.1
     restart: always
     hostname: web
     extra_hosts:
@@ -736,7 +736,7 @@ services:
         max-file: "3"
 
   plugin_daemon:
-    image: langgenius/dify-plugin-daemon:0.1.2-local
+    image: langgenius/dify-plugin-daemon:0.1.3-local
     restart: unless-stopped
     environment:
       DB_DATABASE: ${DB_PLUGIN_DATABASE:-dify_plugin}
