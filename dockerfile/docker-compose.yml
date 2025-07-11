@@ -632,7 +632,7 @@ services:
 
 # 下面是dify
   dify-api:
-    image: langgenius/dify-api:1.5.1
+    image: langgenius/dify-api:1.6.0
     hostname: api
 #    restart: always
     environment:
@@ -663,7 +663,7 @@ services:
         max-file: "3"
 
   dify-worker:
-    image: langgenius/dify-api:1.5.1
+    image: langgenius/dify-api:1.6.0
     hostname: worker
 #    restart: always
     environment:
@@ -692,7 +692,7 @@ services:
       - default
 
   dify-web:
-    image: langgenius/dify-web:1.5.1
+    image: langgenius/dify-web:1.6.0
     restart: always
     hostname: web
     extra_hosts:
