@@ -632,12 +632,16 @@ services:
 
 # 下面是dify
   dify-api:
-    image: langgenius/dify-api:1.6.0
+    image: langgenius/dify-api:1.7.1
     hostname: api
-#    restart: always
+    restart: always
     environment:
       # Startup mode, 'api' starts the API server.
       MODE: api
+      SENTRY_TRACES_SAMPLE_RATE: ${API_SENTRY_TRACES_SAMPLE_RATE:-1.0}
+      SENTRY_PROFILES_SAMPLE_RATE: ${API_SENTRY_PROFILES_SAMPLE_RATE:-1.0}
+      PLUGIN_REMOTE_INSTALL_HOST: ${EXPOSE_PLUGIN_DEBUGGING_HOST:-localhost}
+      PLUGIN_REMOTE_INSTALL_PORT: ${EXPOSE_PLUGIN_DEBUGGING_PORT:-5003}
       PLUGIN_MAX_PACKAGE_SIZE: ${PLUGIN_MAX_PACKAGE_SIZE:-52428800}
       INNER_API_KEY_FOR_PLUGIN: ${PLUGIN_DIFY_INNER_API_KEY:-QaHbTe77CtuXmsfyhR7+vRjI/+XbV1AaFy691iy+kGDv2Jvy0/eAh8Y1}
     depends_on:
@@ -663,12 +667,14 @@ services:
         max-file: "3"
 
   dify-worker:
-    image: langgenius/dify-api:1.6.0
+    image: langgenius/dify-api:1.7.1
     hostname: worker
-#    restart: always
+    restart: always
     environment:
       # Startup mode, 'worker' starts the Celery worker for processing the queue.
       MODE: worker
+      SENTRY_TRACES_SAMPLE_RATE: ${API_SENTRY_TRACES_SAMPLE_RATE:-1.0}
+      SENTRY_PROFILES_SAMPLE_RATE: ${API_SENTRY_PROFILES_SAMPLE_RATE:-1.0}
       PLUGIN_MAX_PACKAGE_SIZE: ${PLUGIN_MAX_PACKAGE_SIZE:-52428800}
       INNER_API_KEY_FOR_PLUGIN: ${PLUGIN_DIFY_INNER_API_KEY:-QaHbTe77CtuXmsfyhR7+vRjI/+XbV1AaFy691iy+kGDv2Jvy0/eAh8Y1}
     depends_on:
@@ -691,13 +697,37 @@ services:
       - ssrf_proxy_network
       - default
 
+  # worker_beat service
+  # Celery beat for scheduling periodic tasks.
+  worker_beat:
+    image: langgenius/dify-api:1.7.1
+    restart: always
+    environment:
+      # Startup mode, 'worker_beat' starts the Celery beat for scheduling periodic tasks.
+      MODE: beat
+    depends_on:
+      mypostgres:
+        condition: service_healthy
+      myredis:
+        condition: service_healthy
+    env_file:
+      - dify/dify.env
+    networks:
+      - ssrf_proxy_network
+      - default
+
   dify-web:
-    image: langgenius/dify-web:1.6.0
+    image: langgenius/dify-web:1.7.1
     restart: always
     hostname: web
     extra_hosts:
       - host.docker.internal:host-gateway
 #    restart: always
+    environment:
+      NEXT_TELEMETRY_DISABLED: ${NEXT_TELEMETRY_DISABLED:-0}
+      ALLOW_UNSAFE_DATA_SCHEME: ${ALLOW_UNSAFE_DATA_SCHEME:-false}
+      MARKETPLACE_URL: ${MARKETPLACE_URL:-https://marketplace.dify.ai}
+      PM2_INSTANCES: ${PM2_INSTANCES:-2}
     env_file:
       - dify/dify.env
     logging:
@@ -736,7 +766,7 @@ services:
         max-file: "3"
 
   plugin_daemon:
-    image: langgenius/dify-plugin-daemon:0.1.3-local
+    image: langgenius/dify-plugin-daemon:0.2.0-local
     restart: unless-stopped
     environment:
       DB_DATABASE: ${DB_PLUGIN_DATABASE:-dify_plugin}
