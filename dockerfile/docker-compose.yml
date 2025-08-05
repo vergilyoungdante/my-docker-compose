@@ -66,7 +66,7 @@ services:
         max-file: "3"
 
   myrabbitmq:
-    image: rabbitmq:4.1.1-management
+    image: rabbitmq:4.1.3-management
     container_name: vergil-rabbitmq
     ports:
       - 25672:5672
@@ -192,7 +192,7 @@ services:
         max-file: "3"
 
   mynacos:
-    image: nacos/nacos-server:v3.0.1
+    image: nacos/nacos-server:v3.0.2
     container_name: mynacos
     ports:
       - 28080:8080
@@ -292,7 +292,7 @@ services:
 
   attu:
     container_name: attu
-    image: zilliz/attu:v2.5.10
+    image: zilliz/attu:v2.5.12
     environment:
       MILVUS_URL: milvus-standalone:19530
     ports:
@@ -404,7 +404,7 @@ services:
         max-file: "3"
 
   ollama:
-    image: ollama/ollama:0.9.2
+    image: ollama/ollama:0.10.1
     container_name: ollama
     hostname: ollama
     restart: unless-stopped
@@ -424,7 +424,7 @@ services:
         max-file: "3"
 
   open-webui:
-    image: ghcr.io/open-webui/open-webui:0.6.15
+    image: ghcr.io/open-webui/open-webui:0.6.18
     container_name: open-webui
     hostname: open-webui
     volumes:
@@ -537,7 +537,7 @@ services:
 #        max-file: "3"
 
   mygitlab:
-    image: gitlab/gitlab-ce:18.0.2-ce.0
+    image: gitlab/gitlab-ce:18.2.1-ce.0
     container_name: gitlab
     user: root
 #    restart: always
@@ -601,30 +601,6 @@ services:
     depends_on:
       - mypostgres
       - myredis
-    logging:
-      options:
-        max-size: "10m"
-        max-file: "3"
-  #智能爬虫，目前给dify用，已集成MCP
-  crawl4ai:
-    image: unclecode/crawl4ai:0.6.0-r2
-    ports:
-      - "11235:11235"  # Gunicorn port
-    volumes:
-      - /mnt/data/vergil/ollama/crawl4ai/dev/shm:/dev/shm  # Chromium performance
-    deploy:
-      resources:
-        limits:
-          memory: 4G
-        reservations:
-          memory: 1G
-    restart: unless-stopped
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:11235/health" ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
     logging:
       options:
         max-size: "10m"
