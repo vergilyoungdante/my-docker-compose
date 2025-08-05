@@ -9,6 +9,11 @@ networks:
         - subnet: 172.19.0.0/16
 #  elastic:
 #    driver: bridge
+  mydefault:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
   ssrf_proxy_network:
     driver: bridge
     internal: true
@@ -26,6 +31,8 @@ services:
       - /mnt/data/vergil/redis:/data
     ports:
       - 26379:6379
+    networks:
+      - mydefault
     restart: always
     healthcheck:
       test: [ "CMD", "redis-cli","ping" ]
@@ -42,6 +49,8 @@ services:
     privileged: true
     ports:
       - 25432:5432
+    networks:
+      - mydefault
     environment:
       POSTGRES_PASSWORD: xyfs2023
       POSTGRES_USER: postgres
@@ -71,6 +80,8 @@ services:
     ports:
       - 25672:5672
       - 35672:15672
+    networks:
+      - mydefault
     environment:
       - RABBITMQ_DEFAULT_PASS=xyfs2023
       - RABBITMQ_DEFAULT_USER=vergil
@@ -98,6 +109,8 @@ services:
       - /mnt/data/vergil/mysql/config:/etc/mysql/conf.d
     ports:
       - 23306:3306
+    networks:
+      - mydefault
     restart: always
 #    deploy:
 #      resources:
@@ -170,6 +183,8 @@ services:
     ports:
       - 29000:9000
       - 29090:9090
+    networks:
+      - mydefault
     command: minio server /data --console-address ":9090"
     environment:
       - MINIO_ROOT_USER=vergil
@@ -198,6 +213,8 @@ services:
       - 28080:8080
       - 28848:8848
       - 29848:9848
+    networks:
+      - mydefault
     volumes:
       - /mnt/data/vergil/nacos:/home/nacos/logs
     env_file:
@@ -248,6 +265,8 @@ services:
     ports:
       - 22379:2379
       - 22380:2380
+    networks:
+      - mydefault
     healthcheck:
       test: [ "CMD", "etcdctl", "endpoint", "health" ]
       interval: 30s
@@ -276,6 +295,8 @@ services:
     ports:
       - "39530:19530"
       - "39091:9091"
+    networks:
+      - mydefault
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:9091/healthz" ]
       interval: 30s
@@ -297,6 +318,8 @@ services:
       MILVUS_URL: milvus-standalone:19530
     ports:
       - "33000:3000"
+    networks:
+      - mydefault
     depends_on:
       - "mymilvus"
 
@@ -398,6 +421,7 @@ services:
       - "23000:3000"
     networks:
       - monitor
+      - mydefault
     logging:
       options:
         max-size: "10m"
@@ -416,6 +440,8 @@ services:
       - /dev/dri
     ports:
       - 31434:11434
+    networks:
+      - mydefault
     extra_hosts:
       - host.docker.internal:host-gateway
     logging:
@@ -423,46 +449,48 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  open-webui:
-    image: ghcr.io/open-webui/open-webui:0.6.18
-    container_name: open-webui
-    hostname: open-webui
-    volumes:
-      - /mnt/data/vergil/openwebui:/app/backend/data
-    ports:
-      - 28081:8081
-    environment:
-      - OLLAMA_BASE_URL=http://ollama:11434
-      - ADMIN_EMAIL=yjb387759719@outlook.com
-      - ENABLE_REALTIME_CHAT_SAVE=True
-      - HF_ENDPOINT=https://hf-mirror.com
-      - PORT=8081
-      - DATABASE_URL=postgresql://ollama:ollama@vergil-postgres:5432/webui
-      - DATABASE_POOL_SIZE=16
-      - JWT_EXPIRES_IN=30d
-      - ENABLE_COMMUNITY_SHARING=False
-      - VECTOR_DB=milvus
-      - MILVUS_URI=http://root:Milvus@milvus-standalone:19530/openwebui
-      - MILVUS_DB=openwebui
-      - STORAGE_PROVIDER=s3
-      - S3_ACCESS_KEY_ID=InV5AW7gpmyrr8IhCF02
-      - S3_ADDRESSING_STYLE=path
-      - S3_BUCKET_NAME=openwebui
-      - S3_ENDPOINT_URL=http://minio:9000
-      - S3_KEY_PREFIX=baseService
-      - S3_REGION_NAME=cn-northwest-1
-      - S3_SECRET_ACCESS_KEY=Fzykpr5SZv84ZzVw8s0CE46RbJer2taOCDLzeuzl
-      - REDIS_URL=redis://:xyfs2023@vergil-redis:6379/1
-    extra_hosts:
-      - host.docker.internal:host-gateway
-    depends_on:
-      - ollama
-      - myredis
-      - mypostgres
-    logging:
-      options:
-        max-size: "10m"
-        max-file: "3"
+#  open-webui:
+#    image: ghcr.io/open-webui/open-webui:0.6.18
+#    container_name: open-webui
+#    hostname: open-webui
+#    volumes:
+#      - /mnt/data/vergil/openwebui:/app/backend/data
+#    ports:
+#      - 28081:8081
+#    networks:
+#      - mydefault
+#    environment:
+#      - OLLAMA_BASE_URL=http://ollama:11434
+#      - ADMIN_EMAIL=yjb387759719@outlook.com
+#      - ENABLE_REALTIME_CHAT_SAVE=True
+#      - HF_ENDPOINT=https://hf-mirror.com
+#      - PORT=8081
+#      - DATABASE_URL=postgresql://ollama:ollama@vergil-postgres:5432/webui
+#      - DATABASE_POOL_SIZE=16
+#      - JWT_EXPIRES_IN=30d
+#      - ENABLE_COMMUNITY_SHARING=False
+#      - VECTOR_DB=milvus
+#      - MILVUS_URI=http://root:Milvus@milvus-standalone:19530/openwebui
+#      - MILVUS_DB=openwebui
+#      - STORAGE_PROVIDER=s3
+#      - S3_ACCESS_KEY_ID=InV5AW7gpmyrr8IhCF02
+#      - S3_ADDRESSING_STYLE=path
+#      - S3_BUCKET_NAME=openwebui
+#      - S3_ENDPOINT_URL=http://minio:9000
+#      - S3_KEY_PREFIX=baseService
+#      - S3_REGION_NAME=cn-northwest-1
+#      - S3_SECRET_ACCESS_KEY=Fzykpr5SZv84ZzVw8s0CE46RbJer2taOCDLzeuzl
+#      - REDIS_URL=redis://:xyfs2023@vergil-redis:6379/1
+#    extra_hosts:
+#      - host.docker.internal:host-gateway
+#    depends_on:
+#      - ollama
+#      - myredis
+#      - mypostgres
+#    logging:
+#      options:
+#        max-size: "10m"
+#        max-file: "3"
 
   #  mcpo:
   #    image: ghcr.io/open-webui/mcpo:main
@@ -546,6 +574,8 @@ services:
       - '20080:80'
       - '20443:443'
       - '20222:22'
+    networks:
+      - mydefault
     environment:
         TZ: 'Asia/Shanghai'
         GITLAB_OMNIBUS_CONFIG: |
@@ -636,7 +666,7 @@ services:
       - dify/dify.env
     networks:
       - ssrf_proxy_network
-      - default
+      - mydefault
     logging:
       options:
         max-size: "10m"
@@ -671,7 +701,7 @@ services:
         max-file: "3"
     networks:
       - ssrf_proxy_network
-      - default
+      - mydefault
 
   # worker_beat service
   # Celery beat for scheduling periodic tasks.
@@ -690,7 +720,7 @@ services:
       - dify/dify.env
     networks:
       - ssrf_proxy_network
-      - default
+      - mydefault
 
   dify-web:
     image: langgenius/dify-web:1.7.1
@@ -698,6 +728,8 @@ services:
     hostname: web
     extra_hosts:
       - host.docker.internal:host-gateway
+    networks:
+      - mydefault
 #    restart: always
     environment:
       NEXT_TELEMETRY_DISABLED: ${NEXT_TELEMETRY_DISABLED:-0}
@@ -734,7 +766,7 @@ services:
     extra_hosts:
       - host.docker.internal:host-gateway
     networks:
-      - default
+      - mydefault
       - ssrf_proxy_network
     logging:
       options:
@@ -768,6 +800,8 @@ services:
       - dify/dify.env
     ports:
       - 5003:5003
+    networks:
+      - mydefault
     extra_hosts:
       - host.docker.internal:host-gateway
     volumes:
@@ -798,7 +832,7 @@ services:
       SANDBOX_PORT: ${SANDBOX_PORT:-8194}
     networks:
       - ssrf_proxy_network
-      - default
+      - mydefault
     logging:
       options:
         max-size: "10m"
@@ -836,67 +870,46 @@ services:
       - dify-web
     ports:
       - "30080:80"
+    networks:
+      - mydefault
     logging:
       options:
         max-size: "10m"
         max-file: "3"
 
-  keycloak:
-    image: quay.io/keycloak/keycloak:26.2.5
-    restart: unless-stopped
-    environment:
-      KC_DB: postgres
-      KC_DB_PASSWORD: keycloak
-      KC_DB_URL: jdbc:postgresql://vergil-postgres/keycloak
-      KC_DB_USERNAME: keycloak
-      KC_HEALTH_ENABLE: true
-      KC_BOOTSTRAP_ADMIN_USERNAME: vergil
-      KC_BOOTSTRAP_ADMIN_PASSWORD: xyfs2025
-      KC_HTTP_ENABLE: true
-      KC_HTTPS_ENABLED: false
-      KC_HOSTNAME: 223.72.5.245
-      KC_HOSTNAME_STRICT: false
-      KC_HOSTNAME_STRICT_HTTPS: false
-      KC_METRICS_ENABLED: true
-      KC_HTTPS_CLIENT_AUTH: none
-      KC_HTTPS_MANAGEMENT_CLIENT_AUTH: none
-    command:
-      - 'start-dev'
-    depends_on:
-      - mypostgres
-    ports:
-      - 38080:8080
-      - 28443:8443
-      - 39000:9000
-    logging:
-      options:
-        max-size: "10m"
-        max-file: "3"
-
-  # bilinote服务
-#  bilinote-backend:
-#    image: jefferyhjw/bilinote-backend:latest
-#    container_name: bilinote-backend
-#    hostname: backend
+#  keycloak:
+#    image: quay.io/keycloak/keycloak:26.2.5
 #    restart: unless-stopped
-#    env_file:
-#      - bilinote/bilinote.env
-
-#  bilinote-frontend:
-#    image: jefferyhjw/bilinote-frontend:latest
-#    container_name: bilinote-frontend
-#    hostname: frontend
-#    restart: unless-stopped
-
-#  bilinote-nginx:
-#    image: jefferyhjw/bilinote-nginx:latest
-#    container_name: bilinote-nginx
-#    ports:
-#      - "40080:80"
+#    environment:
+#      KC_DB: postgres
+#      KC_DB_PASSWORD: keycloak
+#      KC_DB_URL: jdbc:postgresql://vergil-postgres/keycloak
+#      KC_DB_USERNAME: keycloak
+#      KC_HEALTH_ENABLE: true
+#      KC_BOOTSTRAP_ADMIN_USERNAME: vergil
+#      KC_BOOTSTRAP_ADMIN_PASSWORD: xyfs2025
+#      KC_HTTP_ENABLE: true
+#      KC_HTTPS_ENABLED: false
+#      KC_HOSTNAME: 223.72.5.245
+#      KC_HOSTNAME_STRICT: false
+#      KC_HOSTNAME_STRICT_HTTPS: false
+#      KC_METRICS_ENABLED: true
+#      KC_HTTPS_CLIENT_AUTH: none
+#      KC_HTTPS_MANAGEMENT_CLIENT_AUTH: none
+#    command:
+#      - 'start-dev'
 #    depends_on:
-#      - bilinote-backend
-#      - bilinote-frontend
-#    restart: unless-stopped
+#      - mypostgres
+#    ports:
+#      - 38080:8080
+#      - 28443:8443
+#      - 39000:9000
+#    networks:
+#      - mydefault
+#    logging:
+#      options:
+#        max-size: "10m"
+#        max-file: "3"
 
 #  mcsweb:
 #    image: githubyumao/mcsmanager-web:latest
